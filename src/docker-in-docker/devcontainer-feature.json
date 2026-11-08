@@ -61,13 +61,6 @@
             443
           ],
           "description": "Image layer downloads"
-        },
-        {
-          "name": "docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com",
-          "ports": [
-            443
-          ],
-          "description": "Image layer downloads"
         }
       ],
       "files": [
