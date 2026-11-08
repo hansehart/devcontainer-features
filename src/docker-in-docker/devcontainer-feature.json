@@ -74,7 +74,7 @@
         {
           "name": "daemon.json",
           "target": "${stateDir}/daemon.json",
-          "description": "The daemon's config, applied by restarting it"
+          "description": "DNS, registry mirrors and storage, applied by restarting the daemon"
         }
       ]
     }

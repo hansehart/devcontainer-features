@@ -51,7 +51,7 @@
         {
           "name": "config.toml",
           "target": "${stateDir}/config.toml",
-          "description": "Codex's config"
+          "description": "Approval policy, sandbox mode, model and MCP servers"
         }
       ]
     }
