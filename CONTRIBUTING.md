@@ -53,4 +53,4 @@ Every option belongs to one of these kinds, and every option is tested at least 
 
 ### o3s metadata
 
-A feature names what o3s sets up for it in `customizations.o3s`, which other tools ignore. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`name`, `ports`, `secret`, `inject`). `env` holds the variables for its hardened defaults and state paths, and `files` the config files o3s copies in, keyed by name. Values may use `${stateDir}`, which o3s fills in with the state dir it chose.
+A feature names what o3s sets up for it in `customizations.o3s`, the section o3s reads. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`name`, `ports`, `secret`, `inject`). `env` holds the variables for its hardened defaults and state paths, and `files` the config files o3s copies in, keyed by name. Values may use `${stateDir}`, which o3s fills in with the state dir it chose.
