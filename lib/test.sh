@@ -445,32 +445,12 @@ sandbox; hook <<<'init_state() { echo "state=[$STATE_DIR]"; }'
 run_hook
 check "a hook without a recorded state dir still runs its own part" bash -c "grep -qx 'state=\[\]' '$SANDBOX/out' && ! grep -q 'container filesystem' '$SANDBOX/out'"
 
-sandbox; hook <<<'init_state() { apply_config requested.toml "$HOME/conf/config.toml"; }'
-printf '%s' 'a = 1\nb = 2' > "$SANDBOX/root/usr/local/etc/tool/requested.toml"
-run_hook
-check "apply_config writes the request with its escaped line breaks expanded" bash -c "[ \"\$(wc -l < '$SANDBOX/home/conf/config.toml')\" -eq 2 ]"
-
-sandbox; hook <<<'init_state() { apply_config requested.json "$HOME/settings.json" "%s"; }'
-printf '%s' '{"a":"x\\ny"}' > "$SANDBOX/root/usr/local/etc/tool/requested.json"
-run_hook
-check "apply_config can keep the request verbatim" bash -c "grep -qF '{\"a\":\"x\\\\ny\"}' '$SANDBOX/home/settings.json'"
-
-sandbox; hook <<<'init_state() { apply_config requested.toml "$HOME/conf/config.toml"; }'
-: > "$SANDBOX/root/usr/local/etc/tool/requested.toml"
-run_hook
-check "apply_config leaves the target alone for an empty request" bash -c "! [ -e '$SANDBOX/home/conf/config.toml' ]"
-
 sandbox; repo="$SANDBOX/repo"; mkdir -p "$repo/lib" "$repo/src/plain"
 cp "$(dirname "$LIB")/sync.sh" "$LIB" "$(dirname "$LIB")/state-dir.sh" "$(dirname "$LIB")/hook.sh" "$repo/lib/"
 printf '#!/bin/sh\necho plain\n' > "$repo/src/plain/install.sh"; printf '#!/bin/sh\n' > "$repo/src/plain/init.sh"
 cp "$(dirname "$LIB")/hook.sh" "$repo/src/plain/hook.sh"
 bash "$repo/lib/sync.sh" --check > "$SANDBOX/out" 2>&1
 check "the sync check reports a hook copy its feature's hook no longer sources" has "src/plain/hook.sh is a hook copy its feature's hook doesn't source"
-
-sandbox; cp "$(dirname "$LIB")/hook.sh" "$SANDBOX/feature/hook.sh"
-printf '#!/usr/bin/env bash\nset -euo pipefail\n. "$(dirname "$0")/hook.sh"\napply_config requested.toml "$HOME/x"\n' > "$SANDBOX/feature/init.sh"
-env HOME="$SANDBOX" bash "$SANDBOX/feature/init.sh" > "$SANDBOX/out" 2>&1
-check "apply_config outside init_main names where it belongs" has "apply_config runs inside init_main"
 
 # --- the state-dir guard ----------------------------------------------------------------
 
@@ -527,6 +507,11 @@ HOOKS+=(extra-init.sh)
 feature_main"
 run
 check "a feature's extra hooks land beside its hook" bash -c "[ -x '$SANDBOX/root/usr/local/libexec/tool/extra-init.sh' ]"
+
+sandbox; printf '#!/usr/bin/env bash\n. "$(dirname "$0")/hook.sh"\ndeclare -F | grep -o "apply_config" || echo none\n' > "$SANDBOX/feature/init.sh"
+cp "$(dirname "$LIB")/hook.sh" "$SANDBOX/feature/hook.sh"
+bash "$SANDBOX/feature/init.sh" > "$SANDBOX/out" 2>&1
+check "the shared hook offers the state dir's preparation alone" bash -c "grep -qx none '$SANDBOX/out'"
 
 # --- o3s metadata -------------------------------------------------------------------------
 

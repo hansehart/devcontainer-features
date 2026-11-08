@@ -2,10 +2,9 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, NPMRC.
+# Options (uppercased by the CLI): VERSION, STATEDIR.
 FEATURE=node
 VERSION="$(option VERSION lts)"
-NPMRC="$(option NPMRC "")"
 
 # Accept only options in the feature's format, before anything is installed.
 require_version '^(latest|lts|v?[0-9]+(\.[0-9]+){0,2})$'
@@ -53,11 +52,9 @@ profile() {
   fi
 }
 
-# Give every process a global prefix on the default PATH, and record the requested config for
-# the hook to apply at create.
+# Give every process a global prefix on the default PATH.
 settings() {
   write_file /etc/opt/node/npmrc $'prefix=/usr/local\n'
-  write_file /usr/local/etc/node/requested-npmrc "$NPMRC"
 }
 
 # Confirm the runtime and its package tools run from the PATH.

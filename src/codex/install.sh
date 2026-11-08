@@ -2,10 +2,9 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, CONFIGTOML.
+# Options (uppercased by the CLI): VERSION, STATEDIR.
 FEATURE=codex
 VERSION="$(option VERSION latest)"
-CONFIG_TOML="$(option CONFIGTOML "")"
 
 # Accept only options in the feature's format, before anything is installed.
 require_version '^(latest|[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?)$'
@@ -29,11 +28,6 @@ install_program() {
 profile() {
   echo 'export PATH="$HOME/.local/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then echo "export CODEX_HOME=\"$STATE_DIR\""; fi
-}
-
-# Record the requested config, for the hook to apply at create.
-settings() {
-  record requested-config.toml "$CONFIG_TOML"
 }
 
 # Confirm the tool runs for the dev user.

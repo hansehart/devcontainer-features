@@ -2,10 +2,9 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, SETTINGSJSON.
+# Options (uppercased by the CLI): VERSION, STATEDIR.
 FEATURE=claude-code
 VERSION="$(option VERSION latest)"
-SETTINGS_JSON="$(option SETTINGSJSON "")"
 
 # Accept only options in the feature's format, before anything is installed.
 require_version '^(latest|stable|[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?)$'
@@ -25,11 +24,6 @@ install_program() {
 profile() {
   echo 'export PATH="$HOME/.local/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then echo "export CLAUDE_CONFIG_DIR=\"$STATE_DIR\""; fi
-}
-
-# Record the requested settings, for the hook to apply at create.
-settings() {
-  record requested-settings.json "$SETTINGS_JSON"
 }
 
 # Confirm the tool runs for the dev user.

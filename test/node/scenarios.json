@@ -15,14 +15,6 @@
       }
     }
   },
-  "npmrc": {
-    "image": "ubuntu:24.04",
-    "features": {
-      "node": {
-        "npmrc": "ignore-scripts=true\\naudit-level=low"
-      }
-    }
-  },
   "pinned_version": {
     "image": "ubuntu:24.04",
     "features": {

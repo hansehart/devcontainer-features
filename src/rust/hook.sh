@@ -30,15 +30,5 @@ init_main() {
   if declare -F init_state >/dev/null; then init_state "$@"; fi
 }
 
-# Apply a requested config the build recorded, when there is one, expanded or as the format says.
-apply_config() {
-  [ -n "${FEATURE:-}" ] || { echo "apply_config runs inside init_main" >&2; exit 1; }
-  local request="$FEATURE_ROOT/usr/local/etc/$FEATURE/$1" target="$2" format="${3:-%b}"
-  [ -s "$request" ] || return 0
-  mkdir -p "$(dirname "$target")"
-  # shellcheck disable=SC2059  # the format is the caller's choice of %b or %s
-  printf "$format\n" "$(cat "$request")" > "$target"
-}
-
 # Keep the shared steps the same for every hook.
-readonly -f init_main apply_config
+readonly -f init_main

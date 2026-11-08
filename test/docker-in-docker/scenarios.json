@@ -1,13 +1,4 @@
 {
-  "daemon_json": {
-    "image": "ubuntu:24.04",
-    "remoteUser": "ubuntu",
-    "features": {
-      "docker-in-docker": {
-        "daemonJson": "{\\\"no-new-privileges\\\":true}"
-      }
-    }
-  },
   "pinned_version": {
     "image": "ubuntu:24.04",
     "remoteUser": "ubuntu",
@@ -39,7 +30,9 @@
       "/dev/net/tun"
     ],
     "features": {
-      "docker-in-docker": {}
+      "docker-in-docker": {
+        "stateDir": "/home/ubuntu/docker-in-docker"
+      }
     }
   },
   "shared_socket": {

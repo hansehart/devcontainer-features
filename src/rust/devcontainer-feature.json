@@ -48,14 +48,14 @@
           "ports": [
             443
           ],
-          "description": "Toolchains and components from rustup"
+          "description": "Components and toolchains from rustup"
         }
       ],
       "env": [
         {
           "name": "CARGO_HOME",
           "value": "${stateDir}",
-          "description": "Cargo's registry cache and installed tools in the state dir"
+          "description": "Cargo's installed tools and registry cache in the state dir"
         },
         {
           "name": "RUSTUP_AUTO_INSTALL",

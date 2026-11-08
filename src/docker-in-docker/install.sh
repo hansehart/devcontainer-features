@@ -2,12 +2,11 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, BUILDXVERSION, COMPOSEVERSION, DAEMONJSON.
+# Options (uppercased by the CLI): VERSION, STATEDIR, BUILDXVERSION, COMPOSEVERSION.
 FEATURE=docker-in-docker
 VERSION="$(option VERSION latest)"
 BUILDX_VERSION="$(option BUILDXVERSION latest)"
 COMPOSE_VERSION="$(option COMPOSEVERSION latest)"
-DAEMON_JSON="$(option DAEMONJSON "")"
 
 # Accept only options in the feature's format, before anything is installed.
 format='^(latest|[0-9]+(\.[0-9]+){0,2})$'
@@ -78,11 +77,9 @@ profile() {
   if [ -n "$STATE_DIR" ]; then echo "export DOCKER_CONFIG=\"$STATE_DIR\""; fi
 }
 
-# Record which user runs the daemon and the requested daemon settings, for the entrypoint
-# to apply at start.
+# Record which user runs the daemon, for the entrypoint to start it as at start.
 settings() {
   record rootless-user "$_REMOTE_USER"$'\n'
-  record requested-daemon.json "$DAEMON_JSON"
 }
 
 # Set up the dev user who runs the daemon, and ship the syscall profile it needs.

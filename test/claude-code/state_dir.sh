@@ -13,10 +13,10 @@ check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/claude-co
 
 check "CLAUDE_CONFIG_DIR exported" bash -lc '[ "$CLAUDE_CONFIG_DIR" = /home/ubuntu/claude-code ]'
 
-# The hook keeps its output private to the dev user.
-check "settings written by the hook" test -f /home/ubuntu/claude-code/settings.json
-check "hook output private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/claude-code/settings.json -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+# The hook prepares the state dir alone, private to the dev user.
+check "the hook writes no settings" test ! -e /home/ubuntu/claude-code/settings.json
+check "state dir private to the dev user" \
+  bash -c '[ -z "$(find /home/ubuntu/claude-code -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

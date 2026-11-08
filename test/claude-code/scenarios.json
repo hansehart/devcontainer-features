@@ -7,21 +7,12 @@
       }
     }
   },
-  "settings_json": {
-    "image": "ubuntu:24.04",
-    "features": {
-      "claude-code": {
-        "settingsJson": "{\\\"permissions\\\":{\\\"defaultMode\\\":\\\"plan\\\"}}"
-      }
-    }
-  },
   "state_dir": {
     "image": "ubuntu:24.04",
     "remoteUser": "ubuntu",
     "features": {
       "claude-code": {
-        "stateDir": "/home/ubuntu/claude-code",
-        "settingsJson": "{\\\"permissions\\\":{\\\"defaultMode\\\":\\\"plan\\\"}}"
+        "stateDir": "/home/ubuntu/claude-code"
       }
     }
   }
