@@ -13,12 +13,13 @@ check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/node/.pro
 
 check "NPM_CONFIG_CACHE exported" bash -lc '[ "$NPM_CONFIG_CACHE" = /home/ubuntu/node/cache ]'
 check "NPM_CONFIG_USERCONFIG exported" bash -lc '[ "$NPM_CONFIG_USERCONFIG" = /home/ubuntu/node/npmrc ]'
-check "global prefix in the state dir" bash -lc '[ "$(npm prefix -g)" = /home/ubuntu/node/global ]'
-check "global prefix created" test -d /home/ubuntu/node/global
+check "global prefix is the state dir" bash -lc '[ "$(npm prefix -g)" = /home/ubuntu/node ]'
+# A package installed globally puts its commands in the state dir's bin, which is on the PATH.
+check "global commands on the PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/node/bin:"*) ;; *) exit 1;; esac'
 
 # The hook keeps its output private to the dev user.
 check "hook output private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/node/cache /home/ubuntu/node/global -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+  bash -c '[ -z "$(find /home/ubuntu/node /home/ubuntu/node/cache -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

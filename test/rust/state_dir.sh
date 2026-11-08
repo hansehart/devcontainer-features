@@ -11,12 +11,11 @@ check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/rust/.pro
 # Run the hook as a container create does.
 /usr/local/libexec/rust/init.sh
 
-check "CARGO_HOME exported" bash -lc '[ "$CARGO_HOME" = /home/ubuntu/rust/cargo ]'
-check "cargo home created" test -d /home/ubuntu/rust/cargo
+check "CARGO_HOME is the state dir" bash -lc '[ "$CARGO_HOME" = /home/ubuntu/rust ]'
 
 # A tool installed with cargo lands in the state dir and runs from the PATH.
 project="$(mktemp -d)"
-check "cargo install lands in the state dir" bash -lc "cd '$project' && cargo new -q --offline probe && cargo install -q --offline --path probe && [ -x /home/ubuntu/rust/cargo/bin/probe ]"
+check "cargo install lands in the state dir" bash -lc "cd '$project' && cargo new -q --offline probe && cargo install -q --offline --path probe && [ -x /home/ubuntu/rust/bin/probe ]"
 check "the installed tool runs from the PATH" bash -lc "probe | grep -qx 'Hello, world!'"
 
 # The hook keeps the state dir private to the dev user.
