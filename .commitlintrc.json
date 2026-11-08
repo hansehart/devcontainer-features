@@ -21,6 +21,7 @@
         "lib",
         "node",
         "repo",
+        "rust",
         "sops",
         "tea",
         "uv"

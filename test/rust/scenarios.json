@@ -1,0 +1,28 @@
+{
+  "minor_line": {
+    "image": "ubuntu:24.04",
+    "features": {
+      "rust": {
+        "version": "1.98"
+      }
+    }
+  },
+  "pinned_version": {
+    "image": "ubuntu:24.04",
+    "features": {
+      "rust": {
+        "version": "1.99.1",
+        "rustupVersion": "1.29.3"
+      }
+    }
+  },
+  "state_dir": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "rust": {
+        "stateDir": "/home/ubuntu/rust"
+      }
+    }
+  }
+}

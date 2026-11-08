@@ -1,0 +1,69 @@
+{
+  "id": "rust",
+  "version": "1.0.0",
+  "name": "Rust",
+  "description": "Installs the Rust toolchain through rustup, with rustc and cargo, on a selectable channel or release line.",
+  "documentationURL": "https://github.com/hansehart/devcontainer-features/tree/main/src/rust",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "latest",
+      "description": "Channel (latest|beta|nightly), a minor line (major.minor), or an exact version (major.minor.patch)."
+    },
+    "stateDir": {
+      "type": "string",
+      "default": "",
+      "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
+    },
+    "rustupVersion": {
+      "type": "string",
+      "default": "latest",
+      "description": "rustup channel (latest) or an exact version (major.minor.patch)."
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer"
+      ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "index.crates.io",
+          "ports": [
+            443
+          ],
+          "description": "Crate index cargo resolves dependencies from"
+        },
+        {
+          "name": "static.crates.io",
+          "ports": [
+            443
+          ],
+          "description": "Crate downloads"
+        },
+        {
+          "name": "static.rust-lang.org",
+          "ports": [
+            443
+          ],
+          "description": "Toolchains and components from rustup"
+        }
+      ],
+      "env": [
+        {
+          "name": "CARGO_HOME",
+          "value": "${stateDir}/cargo",
+          "description": "Cargo's registry cache and installed tools in the state dir"
+        },
+        {
+          "name": "RUSTUP_AUTO_INSTALL",
+          "value": "0",
+          "description": "Toolchains a project asks for install on explicit request"
+        }
+      ]
+    }
+  },
+  "postCreateCommand": "/usr/local/libexec/rust/init.sh"
+}

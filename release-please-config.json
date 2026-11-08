@@ -30,6 +30,7 @@
     "src/headless-chrome": { "component": "headless-chrome" },
     "src/latex": { "component": "latex" },
     "src/node": { "component": "node" },
+    "src/rust": { "component": "rust" },
     "src/sops": { "component": "sops" },
     "src/tea": { "component": "tea" },
     "src/uv": { "component": "uv" }

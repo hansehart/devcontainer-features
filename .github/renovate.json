@@ -177,6 +177,34 @@
     },
     {
       "customType": "regex",
+      "description": "Keep the pinned Rust release in its test on the newest release.",
+      "managerFilePatterns": [
+        "/^test/rust/scenarios\\.json$/",
+        "/^test/rust/pinned_version\\.sh$/"
+      ],
+      "matchStrings": [
+        "\"version\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "RUST=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "rust-lang/rust"
+    },
+    {
+      "customType": "regex",
+      "description": "Keep the pinned rustup release in its test on the newest release.",
+      "managerFilePatterns": [
+        "/^test/rust/scenarios\\.json$/",
+        "/^test/rust/pinned_version\\.sh$/"
+      ],
+      "matchStrings": [
+        "\"rustupVersion\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "RUSTUP=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "rust-lang/rustup"
+    },
+    {
+      "customType": "regex",
       "description": "Keep the pinned sops release in its test on the newest release.",
       "managerFilePatterns": [
         "/^test/sops/scenarios\\.json$/",
