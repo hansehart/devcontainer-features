@@ -29,22 +29,24 @@ resolve_version() {
   if [ "$VERSION" = latest ]; then tag=stable; else tag="$VERSION"; fi
 }
 
-# Install rustup and the minimal toolchain as the dev user, then link its commands onto the PATH
-# for every process.
+# Install rustup and the minimal toolchain into their own tree, owned by the dev user so they can
+# add components and toolchains, then link its commands onto the PATH for every process.
 install_program() {
-  local home init
-  home="${_REMOTE_USER_HOME:-$(getent passwd "$_REMOTE_USER" | cut -d: -f6)}"
+  local init
+  install -d -o "$_REMOTE_USER" -g "$(id -gn "$_REMOTE_USER")" "$FEATURE_ROOT/opt/rust"
   # Hand the verified installer to the dev user in a folder they can read.
   init="$(mktemp -d)"
   chmod 0755 "$init"
   install -m 0755 "$tmp/rustup-init" "$init/rustup-init"
-  as_user "$init/rustup-init -y --no-modify-path --profile minimal --default-toolchain '$tag'"
+  as_user "RUSTUP_HOME=/opt/rust/rustup CARGO_HOME=/opt/rust/cargo $init/rustup-init -y --no-modify-path --profile minimal --default-toolchain '$tag'"
   rm -rf "${init:?}"
-  link_bin "$home/.cargo/bin"
+  link_bin /opt/rust/cargo/bin
 }
 
-# Write the login profile: cargo's data in the state dir when set, and the tools cargo installs.
+# Write the login profile: the toolchain's home for shells that start from a fresh environment,
+# cargo's data in the state dir when set, and the tools cargo installs.
 profile() {
+  echo 'export RUSTUP_HOME=/opt/rust/rustup'
   if [ -n "$STATE_DIR" ]; then
     echo "export CARGO_HOME=\"$STATE_DIR\""
     echo "export PATH=\"$STATE_DIR/bin:\$PATH\""
@@ -55,7 +57,7 @@ profile() {
 
 # Confirm the toolchain runs for the dev user.
 confirm() {
-  as_user "rustc --version && cargo --version"
+  as_user "export RUSTUP_HOME=/opt/rust/rustup; rustc --version && cargo --version"
 }
 
 feature_main

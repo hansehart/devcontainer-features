@@ -65,5 +65,8 @@
       ]
     }
   },
+  "containerEnv": {
+    "RUSTUP_HOME": "/opt/rust/rustup"
+  },
   "postCreateCommand": "/usr/local/libexec/rust/init.sh"
 }
