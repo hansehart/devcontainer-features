@@ -20,13 +20,8 @@ project="$(mktemp -d)"
 printf 'package main\n\nimport "fmt"\n\nfunc main() { fmt.Println("hello from go") }\n' > "$project/main.go"
 check "a program builds and runs" bash -lc "cd '$project' && go run main.go | grep -qx 'hello from go'"
 
-# The installed toolchain is the only one that runs by default.
-check "toolchain kept local by default" bash -lc '[ "$(go env GOTOOLCHAIN)" = local ]'
-# A module asking for a newer Go stops with the setting named, before any download.
-newer="$(mktemp -d)"
-printf 'module probe\n\ngo 1.999\n' > "$newer/go.mod"
-check "a module asking for a newer go stops" bash -lc "cd '$newer' && ! go list ./... 2>/dev/null"
-check "the stop names the local toolchain" bash -lc "cd '$newer' && go list ./... 2>&1 | grep -q 'GOTOOLCHAIN=local'"
+# The feature keeps Go's own toolchain setting, which o3s hardens through its env.
+check "toolchain left at Go's default" bash -lc '[ "$(go env GOTOOLCHAIN)" = auto ]'
 
 # Installed tools land on the PATH.
 check "installed tools on PATH" bash -lc 'case ":$PATH:" in *":$(go env GOPATH)/bin:"*) ;; *) exit 1;; esac'

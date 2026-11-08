@@ -23,13 +23,5 @@
         "stateDir": "/home/ubuntu/go"
       }
     }
-  },
-  "toolchain_auto": {
-    "image": "ubuntu:24.04",
-    "features": {
-      "go": {
-        "toolchain": "auto"
-      }
-    }
   }
 }
