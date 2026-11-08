@@ -5,24 +5,25 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/go
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/go/.probe && rm /home/ubuntu/go/.probe'
+check "state dir pre-created" test -d /home/ubuntu/.local/state/go
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/.local/state/go/.probe && rm /home/ubuntu/.local/state/go/.probe'
+check "the folders above the state dir belong to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/.local /home/ubuntu/.local/state | sort -u)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/go/init.sh
 
-check "GOPATH exported" bash -lc '[ "$(go env GOPATH)" = /home/ubuntu/go ]'
-check "GOCACHE exported" bash -lc '[ "$(go env GOCACHE)" = /home/ubuntu/go/cache ]'
-check "installed tools from the state dir on PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/go/bin:"*) ;; *) exit 1;; esac'
+check "GOPATH exported" bash -lc '[ "$(go env GOPATH)" = /home/ubuntu/.local/state/go ]'
+check "GOCACHE exported" bash -lc '[ "$(go env GOCACHE)" = /home/ubuntu/.local/state/go/cache ]'
+check "installed tools from the state dir on PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/.local/state/go/bin:"*) ;; *) exit 1;; esac'
 
 # A build fills the cache in the state dir.
 project="$(mktemp -d)"
 printf 'package main\n\nfunc main() {}\n' > "$project/main.go"
-check "a build caches into the state dir" bash -lc "cd '$project' && go build -o /dev/null main.go && [ -n \"\$(ls -A /home/ubuntu/go/cache)\" ]"
+check "a build caches into the state dir" bash -lc "cd '$project' && go build -o /dev/null main.go && [ -n \"\$(ls -A /home/ubuntu/.local/state/go/cache)\" ]"
 
 # The hook keeps the state dir private to the dev user.
 check "state dir private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/go -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+  bash -c '[ -z "$(find /home/ubuntu/.local/state/go -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

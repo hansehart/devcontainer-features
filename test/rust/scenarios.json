@@ -21,7 +21,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "rust": {
-        "stateDir": "/home/ubuntu/rust"
+        "stateDir": "/home/ubuntu/.local/state/rust"
       }
     }
   }

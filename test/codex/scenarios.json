@@ -12,7 +12,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "codex": {
-        "stateDir": "/home/ubuntu/codex"
+        "stateDir": "/home/ubuntu/.local/state/codex"
       }
     }
   }

@@ -5,18 +5,19 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/codex
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/codex/.probe && rm /home/ubuntu/codex/.probe'
+check "state dir pre-created" test -d /home/ubuntu/.local/state/codex
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/.local/state/codex/.probe && rm /home/ubuntu/.local/state/codex/.probe'
+check "the folders above the state dir belong to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/.local /home/ubuntu/.local/state | sort -u)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/codex/init.sh
 
-check "CODEX_HOME exported" bash -lc '[ "$CODEX_HOME" = /home/ubuntu/codex ]'
+check "CODEX_HOME exported" bash -lc '[ "$CODEX_HOME" = /home/ubuntu/.local/state/codex ]'
 
 # The hook prepares the state dir alone, private to the dev user.
-check "the hook writes no config" test ! -e /home/ubuntu/codex/config.toml
+check "the hook writes no config" test ! -e /home/ubuntu/.local/state/codex/config.toml
 check "state dir private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/codex -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+  bash -c '[ -z "$(find /home/ubuntu/.local/state/codex -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 # The binary keeps running with the state dir moved.
 check "codex runs against the state dir" bash -lc "codex --version"
 

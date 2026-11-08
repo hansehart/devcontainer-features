@@ -5,8 +5,9 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/latex
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/latex/.probe && rm /home/ubuntu/latex/.probe'
+check "state dir pre-created" test -d /home/ubuntu/.local/state/latex
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/.local/state/latex/.probe && rm /home/ubuntu/.local/state/latex/.probe'
+check "the folders above the state dir belong to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/.local /home/ubuntu/.local/state | sort -u)" = ubuntu ]'
 
 # The distribution sits in the image, and the state dir holds the user's own data.
 check "latex links into the TeX Live tree" bash -c "readlink -f \"\$(command -v latex)\" | grep -q '^/opt/texlive/'"
@@ -14,17 +15,17 @@ check "latex links into the TeX Live tree" bash -c "readlink -f \"\$(command -v 
 # Run the hook as a container create does.
 /usr/local/libexec/latex/init.sh
 
-check "TEXMFHOME exported" bash -lc '[ "$TEXMFHOME" = /home/ubuntu/latex/texmf ]'
-check "TEXMFVAR exported" bash -lc '[ "$TEXMFVAR" = /home/ubuntu/latex/texmf-var ]'
-check "TEXMFCONFIG exported" bash -lc '[ "$TEXMFCONFIG" = /home/ubuntu/latex/texmf-config ]'
+check "TEXMFHOME exported" bash -lc '[ "$TEXMFHOME" = /home/ubuntu/.local/state/latex/texmf ]'
+check "TEXMFVAR exported" bash -lc '[ "$TEXMFVAR" = /home/ubuntu/.local/state/latex/texmf-var ]'
+check "TEXMFCONFIG exported" bash -lc '[ "$TEXMFCONFIG" = /home/ubuntu/.local/state/latex/texmf-config ]'
 check "the hook creates the user trees" \
-  test -d /home/ubuntu/latex/texmf -a -d /home/ubuntu/latex/texmf-var -a -d /home/ubuntu/latex/texmf-config
+  test -d /home/ubuntu/.local/state/latex/texmf -a -d /home/ubuntu/.local/state/latex/texmf-var -a -d /home/ubuntu/.local/state/latex/texmf-config
 
 # A package in the user tree is found, as one the user installs themselves would be.
-mkdir -p /home/ubuntu/latex/texmf/tex/latex/probe
-touch /home/ubuntu/latex/texmf/tex/latex/probe/probe.sty
+mkdir -p /home/ubuntu/.local/state/latex/texmf/tex/latex/probe
+touch /home/ubuntu/.local/state/latex/texmf/tex/latex/probe/probe.sty
 check "TeX finds a package in the state dir" \
-  bash -lc 'kpsewhich probe.sty | grep -qx /home/ubuntu/latex/texmf/tex/latex/probe/probe.sty'
+  bash -lc 'kpsewhich probe.sty | grep -qx /home/ubuntu/.local/state/latex/texmf/tex/latex/probe/probe.sty'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \
