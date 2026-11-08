@@ -57,7 +57,7 @@
         {
           "name": "npmrc",
           "target": "${stateDir}/npmrc",
-          "description": "Registries, auth tokens and install behavior"
+          "description": "Auth tokens, install behavior and registries"
         }
       ]
     }

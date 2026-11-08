@@ -48,7 +48,7 @@
         {
           "name": "GOPATH",
           "value": "${stateDir}",
-          "description": "Go's modules and installed tools in the state dir"
+          "description": "Go's installed tools and modules in the state dir"
         },
         {
           "name": "GOCACHE",

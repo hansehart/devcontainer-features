@@ -60,7 +60,7 @@
         {
           "name": "settings.json",
           "target": "${stateDir}/settings.json",
-          "description": "Permissions, sandbox, hooks and MCP servers"
+          "description": "Hooks, MCP servers, permissions and sandbox"
         }
       ]
     }
