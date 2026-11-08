@@ -60,7 +60,7 @@
         {
           "name": "settings.json",
           "target": "${stateDir}/settings.json",
-          "description": "Hooks, MCP, permissions and sandbox"
+          "description": "The agent's rules and integrations"
         }
       ]
     }
