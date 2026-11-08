@@ -53,7 +53,7 @@
         {
           "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
           "value": "1",
-          "description": "Telemetry and other optional traffic stay off"
+          "description": "With 1, telemetry and other optional traffic stay off"
         },
         {
           "name": "CLAUDE_CONFIG_DIR",

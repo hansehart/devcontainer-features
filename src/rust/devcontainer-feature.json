@@ -60,7 +60,7 @@
         {
           "name": "RUSTUP_AUTO_INSTALL",
           "value": "0",
-          "description": "Toolchains a project asks for install on explicit request"
+          "description": "With 0, toolchains a project asks for install on explicit request"
         }
       ]
     }

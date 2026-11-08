@@ -40,7 +40,7 @@
         {
           "name": "NPM_CONFIG_IGNORE_SCRIPTS",
           "value": "true",
-          "description": "Dependency install scripts run on explicit request"
+          "description": "With true, dependency install scripts run on explicit request"
         },
         {
           "name": "NPM_CONFIG_CACHE",

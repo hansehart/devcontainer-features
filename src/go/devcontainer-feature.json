@@ -43,7 +43,7 @@
         {
           "name": "GOTOOLCHAIN",
           "value": "local",
-          "description": "Toolchains a project asks for install on explicit request"
+          "description": "With local, toolchains a project asks for install on explicit request"
         },
         {
           "name": "GOPATH",
