@@ -37,7 +37,7 @@
           "ports": [
             443
           ],
-          "description": "Model inference with a ChatGPT plan"
+          "description": "Model inference with a subscription"
         },
         {
           "name": "auth.openai.com",
