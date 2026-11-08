@@ -46,8 +46,8 @@ install_program() {
 # Write the login profile: cargo's data in the state dir when set, and the tools cargo installs.
 profile() {
   if [ -n "$STATE_DIR" ]; then
-    echo "export CARGO_HOME=\"$STATE_DIR/cargo\""
-    echo "export PATH=\"$STATE_DIR/cargo/bin:\$PATH\""
+    echo "export CARGO_HOME=\"$STATE_DIR\""
+    echo "export PATH=\"$STATE_DIR/bin:\$PATH\""
   else
     echo 'export PATH="$HOME/.cargo/bin:$PATH"'
   fi

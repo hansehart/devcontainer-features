@@ -2,10 +2,9 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, IGNORESCRIPTS, NPMRC.
+# Options (uppercased by the CLI): VERSION, STATEDIR, NPMRC.
 FEATURE=node
 VERSION="$(option VERSION lts)"
-IGNORE_SCRIPTS="$(option IGNORESCRIPTS true)"
 NPMRC="$(option NPMRC "")"
 
 # Accept only options in the feature's format, before anything is installed.
@@ -41,19 +40,16 @@ install_program() {
   link_bin /opt/node/bin
 }
 
-# Write the login profile with a global prefix the dev user owns and the chosen settings.
+# Write the login profile with a global prefix the dev user owns, in the state dir when set.
 profile() {
   echo 'export PATH="$HOME/.local/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then
     echo "export NPM_CONFIG_CACHE=\"$STATE_DIR/cache\""
-    echo "export NPM_CONFIG_PREFIX=\"$STATE_DIR/global\""
+    echo "export NPM_CONFIG_PREFIX=\"$STATE_DIR\""
     echo "export NPM_CONFIG_USERCONFIG=\"$STATE_DIR/npmrc\""
-    echo "export PATH=\"$STATE_DIR/global/bin:\$PATH\""
+    echo "export PATH=\"$STATE_DIR/bin:\$PATH\""
   else
     echo 'export NPM_CONFIG_PREFIX="$HOME/.local"'
-  fi
-  if [ "$IGNORE_SCRIPTS" = "true" ]; then
-    echo 'export NPM_CONFIG_IGNORE_SCRIPTS=true'
   fi
 }
 

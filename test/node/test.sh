@@ -34,9 +34,9 @@ cat > "$project/package.json" <<'EOF'
 }
 EOF
 
-check "install scripts ignored by default" bash -lc '[ "$NPM_CONFIG_IGNORE_SCRIPTS" = true ]'
-check "npm install skips the postinstall" bash -lc "cd '$project' && npm install --offline --no-audit --no-fund >/dev/null && [ ! -e ran ]"
-check "npm run still runs the script by name" bash -lc "cd '$project' && npm run --silent postinstall && [ -e ran ]"
+# The feature keeps npm's own defaults, which o3s hardens through its env.
+check "npm keeps its own default" bash -lc '[ -z "${NPM_CONFIG_IGNORE_SCRIPTS:-}" ]'
+check "npm install runs the postinstall" bash -lc "cd '$project' && npm install --offline --no-audit --no-fund >/dev/null && [ -e ran ]"
 
 # Report result
 reportResults

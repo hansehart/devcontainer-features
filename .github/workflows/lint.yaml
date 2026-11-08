@@ -25,3 +25,5 @@ jobs:
         run: bash lib/test.sh
       - name: "Check every feature carries the current library"
         run: bash lib/sync.sh --check
+      - name: "Check every feature's o3s metadata"
+        run: bash lib/o3s-check.sh

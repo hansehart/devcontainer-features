@@ -14,22 +14,47 @@
       "type": "string",
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
-    },
-    "toolchain": {
-      "type": "string",
-      "enum": [
-        "local",
-        "path",
-        "auto"
-      ],
-      "default": "local",
-      "description": "Set GOTOOLCHAIN to this value to choose which Go runs: local only the installed one, path also newer ones on the PATH, auto whatever go.mod asks for, downloaded if needed."
     }
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "golang.go"
+      ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "proxy.golang.org",
+          "ports": [
+            443
+          ],
+          "description": "Modules go downloads"
+        },
+        {
+          "name": "sum.golang.org",
+          "ports": [
+            443
+          ],
+          "description": "Checksums go verifies modules against"
+        }
+      ],
+      "env": [
+        {
+          "name": "GOTOOLCHAIN",
+          "value": "local",
+          "description": "With local, toolchains a project asks for install on explicit request"
+        },
+        {
+          "name": "GOPATH",
+          "value": "${stateDir}",
+          "description": "Go's modules and installed tools in the state dir"
+        },
+        {
+          "name": "GOCACHE",
+          "value": "${stateDir}/cache",
+          "description": "Go's build cache in the state dir"
+        }
       ]
     }
   },

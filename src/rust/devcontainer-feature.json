@@ -54,13 +54,13 @@
       "env": [
         {
           "name": "CARGO_HOME",
-          "value": "${stateDir}/cargo",
+          "value": "${stateDir}",
           "description": "Cargo's registry cache and installed tools in the state dir"
         },
         {
           "name": "RUSTUP_AUTO_INSTALL",
           "value": "0",
-          "description": "Toolchains a project asks for install on explicit request"
+          "description": "With 0, toolchains a project asks for install on explicit request"
         }
       ]
     }
