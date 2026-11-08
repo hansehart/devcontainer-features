@@ -15,5 +15,9 @@ check "overlay2 storage driver" bash -c "docker info --format '{{.Driver}}' | gr
 # Show the daemon's log when a check fails.
 check "nested container runs" bash -c 'docker run --rm hello-world || { echo "--- dockerd.log ---" >&2; cat /tmp/dockerd.log >&2; exit 1; }'
 
+# A daemon config that lands in the state dir takes effect without a restart of the container.
+echo '{"debug": true}' > /home/ubuntu/docker-in-docker/daemon.json
+check "a new daemon config takes effect" bash -c 'for _ in $(seq 60); do [ "$(docker info --format "{{.Debug}}" 2>/dev/null)" = true ] && exit 0; sleep 1; done; cat /tmp/dockerd.log >&2; exit 1'
+
 # Report result
 reportResults

@@ -13,10 +13,10 @@ check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/codex/.pr
 
 check "CODEX_HOME exported" bash -lc '[ "$CODEX_HOME" = /home/ubuntu/codex ]'
 
-# The hook keeps its output private to the dev user.
-check "config written by the hook" test -f /home/ubuntu/codex/config.toml
-check "hook output private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/codex/config.toml -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+# The hook prepares the state dir alone, private to the dev user.
+check "the hook writes no config" test ! -e /home/ubuntu/codex/config.toml
+check "state dir private to the dev user" \
+  bash -c '[ -z "$(find /home/ubuntu/codex -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 # The binary keeps running with the state dir moved.
 check "codex runs against the state dir" bash -lc "codex --version"
 

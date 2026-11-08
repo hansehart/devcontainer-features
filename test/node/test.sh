@@ -19,8 +19,8 @@ for cmd in node npm npx; do
   check "$cmd links into the node folder" bash -c "readlink -f \"\$(command -v $cmd)\" | grep -q '^/opt/node/'"
 done
 check "nothing left in the shared tree" test ! -e /usr/local/lib/node_modules/npm
-# The requested config sits with the feature's config.
-check "requested config in the feature's config dir" test -f /usr/local/etc/node/requested-npmrc
+# The tool's config arrives as a file o3s copies in, so the build records none.
+check "no recorded config" test ! -e /usr/local/etc/node/requested-npmrc
 # Drop the profile's prefix, so the global prefix comes from the feature's global config.
 check "global prefix stays on the default PATH" bash -c '[ "$(env -u NPM_CONFIG_PREFIX npm prefix -g)" = /usr/local ]'
 

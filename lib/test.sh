@@ -528,6 +528,11 @@ feature_main"
 run
 check "a feature's extra hooks land beside its hook" bash -c "[ -x '$SANDBOX/root/usr/local/libexec/tool/extra-init.sh' ]"
 
+sandbox; printf '#!/usr/bin/env bash\n. "$(dirname "$0")/hook.sh"\ndeclare -F | grep -o "apply_config" || echo none\n' > "$SANDBOX/feature/init.sh"
+cp "$(dirname "$LIB")/hook.sh" "$SANDBOX/feature/hook.sh"
+bash "$SANDBOX/feature/init.sh" > "$SANDBOX/out" 2>&1
+check "the shared hook offers the state dir's preparation alone" bash -c "grep -qx none '$SANDBOX/out'"
+
 # --- o3s metadata -------------------------------------------------------------------------
 
 # Write a feature's metadata into a sandbox repo, with the given o3s section.

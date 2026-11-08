@@ -20,6 +20,8 @@ check "root leaves the socket unlinked" bash -c '[ "$(id -u)" = 0 ] && [ ! -e /r
 # The settings sit with the feature's config, and the seccomp profile with its shipped data.
 check "settings in the feature's config dir" test -f /usr/local/etc/docker-in-docker/rootless-user
 check "seccomp profile in the shipped data" test -f /usr/local/share/docker-in-docker/seccomp.json
+# The daemon's config arrives as a file o3s copies in, so the build records none.
+check "no recorded daemon config" test ! -e /usr/local/etc/docker-in-docker/requested-daemon.json
 # The shared hook reads the state dir the build recorded.
 check "the state dir recorded for the hook" test -f /usr/local/etc/docker-in-docker/state-dir
 check "the shared hook beside the feature's hook" test -f /usr/local/libexec/docker-in-docker/hook.sh

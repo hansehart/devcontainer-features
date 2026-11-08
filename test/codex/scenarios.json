@@ -1,12 +1,4 @@
 {
-  "config_toml": {
-    "image": "ubuntu:24.04",
-    "features": {
-      "codex": {
-        "configToml": "approval_policy = \\\"untrusted\\\"\\nsandbox_mode = \\\"read-only\\\""
-      }
-    }
-  },
   "pinned_version": {
     "image": "ubuntu:24.04",
     "features": {
@@ -20,8 +12,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "codex": {
-        "stateDir": "/home/ubuntu/codex",
-        "configToml": "approval_policy = \\\"untrusted\\\"\\nsandbox_mode = \\\"read-only\\\""
+        "stateDir": "/home/ubuntu/codex"
       }
     }
   }
