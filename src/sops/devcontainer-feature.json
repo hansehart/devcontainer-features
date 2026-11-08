@@ -19,5 +19,21 @@
   "dependsOn": {
     "ghcr.io/hansehart/devcontainer-features/age:1": {}
   },
+  "customizations": {
+    "o3s": {
+      "env": [
+        {
+          "name": "SOPS_AGE_KEY_FILE",
+          "value": "${stateDir}/keys.txt",
+          "description": "sops's age keys in the state dir"
+        },
+        {
+          "name": "SOPS_DISABLE_VERSION_CHECK",
+          "value": "true",
+          "description": "With true, version checks run on explicit request"
+        }
+      ]
+    }
+  },
   "postCreateCommand": "/usr/local/libexec/sops/init.sh"
 }

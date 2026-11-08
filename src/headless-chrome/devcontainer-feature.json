@@ -17,5 +17,8 @@
       "default": "latest",
       "description": "Channel (beta|canary|dev|latest|stable) or an exact version (major.minor.build.patch)."
     }
+  },
+  "customizations": {
+    "o3s": {}
   }
 }
