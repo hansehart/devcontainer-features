@@ -5,21 +5,22 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/node
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/node/.probe && rm /home/ubuntu/node/.probe'
+check "state dir pre-created" test -d /home/ubuntu/state/node
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/state/node/.probe && rm /home/ubuntu/state/node/.probe'
+check "the folder above the state dir belongs to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/state)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/node/init.sh
 
-check "NPM_CONFIG_CACHE exported" bash -lc '[ "$NPM_CONFIG_CACHE" = /home/ubuntu/node/cache ]'
-check "NPM_CONFIG_USERCONFIG exported" bash -lc '[ "$NPM_CONFIG_USERCONFIG" = /home/ubuntu/node/npmrc ]'
-check "global prefix is the state dir" bash -lc '[ "$(npm prefix -g)" = /home/ubuntu/node ]'
+check "NPM_CONFIG_CACHE exported" bash -lc '[ "$NPM_CONFIG_CACHE" = /home/ubuntu/state/node/cache ]'
+check "NPM_CONFIG_USERCONFIG exported" bash -lc '[ "$NPM_CONFIG_USERCONFIG" = /home/ubuntu/state/node/npmrc ]'
+check "global prefix is the state dir" bash -lc '[ "$(npm prefix -g)" = /home/ubuntu/state/node ]'
 # A package installed globally puts its commands in the state dir's bin, which is on the PATH.
-check "global commands on the PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/node/bin:"*) ;; *) exit 1;; esac'
+check "global commands on the PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/state/node/bin:"*) ;; *) exit 1;; esac'
 
 # The hook keeps its output private to the dev user.
 check "hook output private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/node /home/ubuntu/node/cache -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+  bash -c '[ -z "$(find /home/ubuntu/state/node /home/ubuntu/state/node/cache -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

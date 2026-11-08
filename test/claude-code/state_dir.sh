@@ -5,18 +5,19 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/claude-code
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/claude-code/.probe && rm /home/ubuntu/claude-code/.probe'
+check "state dir pre-created" test -d /home/ubuntu/state/claude-code
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/state/claude-code/.probe && rm /home/ubuntu/state/claude-code/.probe'
+check "the folder above the state dir belongs to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/state)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/claude-code/init.sh
 
-check "CLAUDE_CONFIG_DIR exported" bash -lc '[ "$CLAUDE_CONFIG_DIR" = /home/ubuntu/claude-code ]'
+check "CLAUDE_CONFIG_DIR exported" bash -lc '[ "$CLAUDE_CONFIG_DIR" = /home/ubuntu/state/claude-code ]'
 
 # The hook prepares the state dir alone, private to the dev user.
-check "the hook writes no settings" test ! -e /home/ubuntu/claude-code/settings.json
+check "the hook writes no settings" test ! -e /home/ubuntu/state/claude-code/settings.json
 check "state dir private to the dev user" \
-  bash -c '[ -z "$(find /home/ubuntu/claude-code -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
+  bash -c '[ -z "$(find /home/ubuntu/state/claude-code -maxdepth 0 -perm /g+rwx,o+rwx)" ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

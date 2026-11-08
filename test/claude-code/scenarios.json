@@ -12,7 +12,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "claude-code": {
-        "stateDir": "/home/ubuntu/claude-code"
+        "stateDir": "/home/ubuntu/state/claude-code"
       }
     }
   }

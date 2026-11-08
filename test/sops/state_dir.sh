@@ -5,13 +5,14 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/sops
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/sops/.probe && rm /home/ubuntu/sops/.probe'
+check "state dir pre-created" test -d /home/ubuntu/state/sops
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/state/sops/.probe && rm /home/ubuntu/state/sops/.probe'
+check "the folder above the state dir belongs to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/state)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/sops/init.sh
 
-check "SOPS_AGE_KEY_FILE exported" bash -lc '[ "$SOPS_AGE_KEY_FILE" = /home/ubuntu/sops/keys.txt ]'
+check "SOPS_AGE_KEY_FILE exported" bash -lc '[ "$SOPS_AGE_KEY_FILE" = /home/ubuntu/state/sops/keys.txt ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

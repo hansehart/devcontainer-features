@@ -12,7 +12,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "uv": {
-        "stateDir": "/home/ubuntu/uv"
+        "stateDir": "/home/ubuntu/state/uv"
       }
     }
   }
