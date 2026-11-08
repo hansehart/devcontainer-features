@@ -10,9 +10,11 @@ for cmd in rustc cargo rustup; do
 done
 check "rustc version" bash -lc "rustc --version"
 
-# The toolchain lives in the user's rustup home, its commands linked onto the PATH.
-check "cargo links into the user's cargo home" bash -c 'case "$(readlink -f "$(command -v cargo)")" in "$HOME"/.cargo/bin/*) ;; *) exit 1;; esac'
-check "a process without the profile runs cargo" bash -c 'env -i PATH=/usr/local/bin:/usr/bin:/bin HOME="$HOME" cargo --version'
+# The toolchain lives in its own tree, its commands linked onto the PATH.
+check "cargo links into the rust tree" bash -c 'case "$(readlink -f "$(command -v cargo)")" in /opt/rust/*) ;; *) exit 1;; esac'
+check "the container names the toolchain's home" bash -c '[ "$RUSTUP_HOME" = /opt/rust/rustup ]'
+check "a process without the profile runs cargo" bash --noprofile --norc -c 'cargo --version'
+check "the home holds none of the toolchain" bash -c '[ ! -e "$HOME/.rustup" ]'
 
 # The minimal profile installs the compiler, cargo and the standard library alone.
 check "only the minimal components" bash -lc '! rustup component list --installed | grep -q clippy'
