@@ -12,7 +12,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "tea": {
-        "stateDir": "/home/ubuntu/state/tea"
+        "stateDir": "/home/ubuntu/.local/state/tea"
       }
     }
   }

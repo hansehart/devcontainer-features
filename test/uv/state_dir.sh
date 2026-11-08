@@ -5,14 +5,14 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/state/uv
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/state/uv/.probe && rm /home/ubuntu/state/uv/.probe'
-check "the folder above the state dir belongs to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/state)" = ubuntu ]'
+check "state dir pre-created" test -d /home/ubuntu/.local/state/uv
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/.local/state/uv/.probe && rm /home/ubuntu/.local/state/uv/.probe'
+check "the folders above the state dir belong to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/.local /home/ubuntu/.local/state | sort -u)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/uv/init.sh
 
-check "UV_CACHE_DIR exported" bash -lc '[ "$UV_CACHE_DIR" = /home/ubuntu/state/uv/cache ]'
+check "UV_CACHE_DIR exported" bash -lc '[ "$UV_CACHE_DIR" = /home/ubuntu/.local/state/uv/cache ]'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

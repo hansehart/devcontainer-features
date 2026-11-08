@@ -5,17 +5,17 @@ set -e
 source dev-container-features-test-lib
 
 # Run as a non-root dev user, whose home keeps the state dir theirs across a UID remap.
-check "state dir pre-created" test -d /home/ubuntu/state/docker-in-docker
-check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/state/docker-in-docker/.probe && rm /home/ubuntu/state/docker-in-docker/.probe'
-check "the folder above the state dir belongs to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/state)" = ubuntu ]'
+check "state dir pre-created" test -d /home/ubuntu/.local/state/docker-in-docker
+check "state dir writable by the dev user" bash -c 'touch /home/ubuntu/.local/state/docker-in-docker/.probe && rm /home/ubuntu/.local/state/docker-in-docker/.probe'
+check "the folders above the state dir belong to the dev user" bash -c '[ "$(stat -c %U /home/ubuntu/.local /home/ubuntu/.local/state | sort -u)" = ubuntu ]'
 
 # Run the hook as a container create does.
 /usr/local/libexec/docker-in-docker/init.sh
 
-check "DOCKER_CONFIG exported" bash -lc '[ "$DOCKER_CONFIG" = /home/ubuntu/state/docker-in-docker ]'
+check "DOCKER_CONFIG exported" bash -lc '[ "$DOCKER_CONFIG" = /home/ubuntu/.local/state/docker-in-docker ]'
 # A context needs no daemon, so creating one shows where the CLI keeps its config.
 check "the CLI writes its config to the state dir" \
-  bash -lc 'docker context create probe --docker host=unix:///run/docker-rootless.sock >/dev/null && test -d /home/ubuntu/state/docker-in-docker/contexts'
+  bash -lc 'docker context create probe --docker host=unix:///run/docker-rootless.sock >/dev/null && test -d /home/ubuntu/.local/state/docker-in-docker/contexts'
 
 # This scenario keeps the state dir on the container filesystem, which the hook warns about.
 check "the hook reports the unmounted state dir" \

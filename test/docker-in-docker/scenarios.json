@@ -31,7 +31,7 @@
     ],
     "features": {
       "docker-in-docker": {
-        "stateDir": "/home/ubuntu/state/docker-in-docker"
+        "stateDir": "/home/ubuntu/.local/state/docker-in-docker"
       }
     }
   },
@@ -75,7 +75,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "docker-in-docker": {
-        "stateDir": "/home/ubuntu/state/docker-in-docker"
+        "stateDir": "/home/ubuntu/.local/state/docker-in-docker"
       }
     }
   }
