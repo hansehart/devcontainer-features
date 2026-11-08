@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Check every feature's o3s metadata against the shape CONTRIBUTING.md describes: lists of
-# entries that each carry a name and a description, plus the fields their kind needs.
+# Keep every feature's o3s metadata in one shape: lists of entries that each carry a name and
+# a description, plus the fields their kind needs.
 set -euo pipefail
 
 root="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
