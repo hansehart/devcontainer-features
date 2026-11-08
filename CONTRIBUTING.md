@@ -50,3 +50,7 @@ Every option belongs to one of these kinds, and every option is tested at least 
 - **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
 - **Hardening:** named after the env var it sets, without the tool's prefix, and either a boolean defaulting to the hardened value or the tool's own values as an enum defaulting to the most secure one. It sets that one documented env var in `/etc/profile.d/<feature>.sh`, and its description starts with `Set <ENV>`. The other values opt out, and the hardening stays independent of user config. Tested by a scenario that sets an opt-out value, named `<option>_<value>`.
 - **User config:** named after the file it writes, and written exactly as given, only when set. Tested with a real hardening setting that differs from the default, checking that it's written and that the tool reads it.
+
+### o3s metadata
+
+A feature names what o3s sets up for it in `customizations.o3s`, which other tools ignore. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`name`, `ports`, `secret`, `inject`). `env` holds the variables for its hardened defaults and state paths, and `files` the config files o3s copies in, keyed by name. Values may use `${stateDir}`, which o3s fills in with the state dir it chose.
