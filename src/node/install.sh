@@ -45,9 +45,9 @@ profile() {
   echo 'export PATH="$HOME/.local/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then
     echo "export NPM_CONFIG_CACHE=\"$STATE_DIR/cache\""
-    echo "export NPM_CONFIG_PREFIX=\"$STATE_DIR/global\""
+    echo "export NPM_CONFIG_PREFIX=\"$STATE_DIR\""
     echo "export NPM_CONFIG_USERCONFIG=\"$STATE_DIR/npmrc\""
-    echo "export PATH=\"$STATE_DIR/global/bin:\$PATH\""
+    echo "export PATH=\"$STATE_DIR/bin:\$PATH\""
   else
     echo 'export NPM_CONFIG_PREFIX="$HOME/.local"'
   fi

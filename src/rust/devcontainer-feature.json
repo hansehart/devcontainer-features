@@ -54,7 +54,7 @@
       "env": [
         {
           "name": "CARGO_HOME",
-          "value": "${stateDir}/cargo",
+          "value": "${stateDir}",
           "description": "Cargo's registry cache and installed tools in the state dir"
         },
         {

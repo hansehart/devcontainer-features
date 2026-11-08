@@ -49,7 +49,7 @@
         },
         {
           "name": "NPM_CONFIG_PREFIX",
-          "value": "${stateDir}/global",
+          "value": "${stateDir}",
           "description": "npm's global packages in the state dir"
         },
         {
