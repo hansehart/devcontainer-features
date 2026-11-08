@@ -29,14 +29,40 @@
     },
     "o3s": {
       "hosts": [
-        { "name": "index.crates.io", "ports": [443] },
-        { "name": "static.crates.io", "ports": [443] },
-        { "name": "static.rust-lang.org", "ports": [443] }
+        {
+          "name": "index.crates.io",
+          "ports": [
+            443
+          ],
+          "description": "Crate index cargo resolves dependencies from"
+        },
+        {
+          "name": "static.crates.io",
+          "ports": [
+            443
+          ],
+          "description": "Crate downloads"
+        },
+        {
+          "name": "static.rust-lang.org",
+          "ports": [
+            443
+          ],
+          "description": "Toolchains and components from rustup"
+        }
       ],
-      "env": {
-        "CARGO_HOME": "${stateDir}/cargo",
-        "RUSTUP_AUTO_INSTALL": "0"
-      }
+      "env": [
+        {
+          "name": "CARGO_HOME",
+          "value": "${stateDir}/cargo",
+          "description": "Cargo's registry cache and installed tools in the state dir"
+        },
+        {
+          "name": "RUSTUP_AUTO_INSTALL",
+          "value": "0",
+          "description": "Toolchains a project asks for install on explicit request"
+        }
+      ]
     }
   },
   "postCreateCommand": "/usr/local/libexec/rust/init.sh"
