@@ -525,7 +525,7 @@ sandbox; repo="$SANDBOX/repo"
 metadata good '{ "hosts": [ { "name": "example.com", "ports": [443], "description": "Downloads" } ],
   "env": [ { "name": "TOOL_HOME", "value": "${stateDir}/home", "description": "Data in the state dir" } ],
   "files": [ { "name": "config.toml", "target": "${stateDir}/config.toml", "description": "Tool config" } ] }'
-mkdir -p "$repo/src/plain"; echo '{ "id": "plain" }' > "$repo/src/plain/devcontainer-feature.json"
+metadata plain '{}'
 bash "$(dirname "$LIB")/o3s-check.sh" "$repo" > "$SANDBOX/out" 2>&1
 check "the o3s check accepts metadata in the documented shape" bash -c "grep -qx '2 features checked' '$SANDBOX/out'"
 
@@ -533,6 +533,9 @@ sandbox; repo="$SANDBOX/repo"
 metadata bad '{ "hosts": [ { "name": "example.com", "ports": [443] } ], "env": { "TOOL_HOME": "x" } }'
 check "the o3s check refuses metadata outside the shape" bash -c "! bash '$(dirname "$LIB")/o3s-check.sh' '$repo' > '$SANDBOX/out' 2>&1"
 check "the o3s check names each problem" bash -c "grep -qF 'src/bad: hosts[0] needs a description' '$SANDBOX/out' && grep -qF 'src/bad: env must be a list' '$SANDBOX/out'"
+
+sandbox; repo="$SANDBOX/repo"; mkdir -p "$repo/src/bare"; echo '{ "id": "bare" }' > "$repo/src/bare/devcontainer-feature.json"
+check "the o3s check asks every feature for a section" bash -c "! bash '$(dirname "$LIB")/o3s-check.sh' '$repo' > '$SANDBOX/out' 2>&1 && grep -qF 'src/bare: needs an o3s section' '$SANDBOX/out'"
 
 echo "$passed passed, $failed failed"
 [ "$failed" -eq 0 ]
