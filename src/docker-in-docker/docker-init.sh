@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
 
 # Read the user who runs the daemon, as recorded at build.
@@ -72,12 +72,13 @@ mkdir -p "$RUNTIME_DIR" "$DATA_ROOT"
 chmod 0700 "$RUNTIME_DIR"
 chown "$RUSER":"$RUSER" "$RUNTIME_DIR" "$DATA_ROOT" || true
 
-# Seed the user's daemon settings with the requested ones.
-req=/usr/local/etc/docker-in-docker/requested-daemon.json
-if [ -s "$req" ] && [ ! -f "${RHOME}/.config/docker/daemon.json" ]; then
-  mkdir -p "${RHOME}/.config/docker"
-  cp "$req" "${RHOME}/.config/docker/daemon.json"
-  chown -R "$RUSER":"$RUSER" "${RHOME}/.config/docker" || true
+# Read the daemon's settings from the state dir the build recorded, or from the daemon's own
+# default place for its user.
+STATE_DIR="$(cat /usr/local/etc/docker-in-docker/state-dir 2>/dev/null || true)"
+if [ -n "$STATE_DIR" ]; then
+  CONFIG="${STATE_DIR}/daemon.json"
+else
+  CONFIG="${RHOME}/.config/docker/daemon.json"
 fi
 
 # Give the id-mapping helpers the capabilities they run with.
@@ -92,26 +93,28 @@ ln -sfn "${RUNTIME_DIR}/docker.sock" /run/docker-rootless.sock
 # Serve a second socket in a mounted directory, for reaching the daemon from outside the
 # container. Both listeners are named together; daemon settings that name hosts win.
 SHARED_DIR=/run/docker-host
-HOSTS=""
+HOSTS=()
 if [ -d "$SHARED_DIR" ]; then
-  if grep -q '"hosts"' "$req" 2>/dev/null; then
-    echo "docker-in-docker: daemonJson already names hosts, so ${SHARED_DIR} is left out" >&2
+  if grep -q '"hosts"' "$CONFIG" 2>/dev/null; then
+    echo "docker-in-docker: ${CONFIG} names its own hosts, which the daemon serves in place of ${SHARED_DIR}" >&2
   else
     # Keep the shared directory private to the daemon's user, since its socket serves anyone
     # who reaches it.
     chown "$RUSER":"$RUSER" "$SHARED_DIR" || true
     chmod 0700 "$SHARED_DIR" || true
-    HOSTS="-H unix://${RUNTIME_DIR}/docker.sock -H unix://${SHARED_DIR}/docker.sock"
+    HOSTS=(-H "unix://${RUNTIME_DIR}/docker.sock" -H "unix://${SHARED_DIR}/docker.sock")
   fi
 fi
 
 start_dockerd() {
+  local flags=("${HOSTS[@]}")
   # Clear pid files from an earlier run, so the daemon starts fresh.
   find /run /var/run -iname 'docker*.pid' -delete 2>/dev/null || true
   find /run /var/run -iname 'container*.pid' -delete 2>/dev/null || true
+  # Point the daemon at its settings in the state dir once they are there.
+  if [ -n "$STATE_DIR" ] && [ -f "$CONFIG" ]; then flags+=(--config-file "$CONFIG"); fi
 
   # Run the daemon as its user, with userspace networking and a private pid namespace.
-  # shellcheck disable=SC2086  # HOSTS carries separate flags
   runuser -u "$RUSER" -- env \
     HOME="$RHOME" \
     XDG_RUNTIME_DIR="$RUNTIME_DIR" \
@@ -120,24 +123,50 @@ start_dockerd() {
     DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
     DOCKERD_ROOTLESS_ROOTLESSKIT_DETACH_NETNS=false \
     DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS="--pidns" \
-    dockerd-rootless.sh $HOSTS --data-root "$DATA_ROOT" --storage-driver=overlay2 > /tmp/dockerd.log 2>&1
+    dockerd-rootless.sh "${flags[@]}" --data-root "$DATA_ROOT" --storage-driver=overlay2 > /tmp/dockerd.log 2>&1
+}
+
+# Name the settings' current version, so the supervisor sees when they arrive or change.
+config_stamp() { stat -c %Y "$CONFIG" 2>/dev/null || echo none; }
+
+# Run the daemon and restart it whenever its settings change, retrying once after a failure and
+# again once the settings change.
+supervise() {
+  local pid stamp failures=0
+  # Start each daemon in its own process group, so a restart stops every process it spawned.
+  set -m
+  while :; do
+    stamp="$(config_stamp)"
+    if [ "$failures" -lt 2 ]; then
+      start_dockerd &
+      pid=$!
+      while kill -0 "$pid" 2>/dev/null && [ "$(config_stamp)" = "$stamp" ]; do sleep 2; done
+      if [ "$(config_stamp)" != "$stamp" ]; then
+        echo "docker-in-docker: ${CONFIG} changed, restarting the daemon" >&2
+        kill -TERM -- "-$pid" 2>/dev/null || true
+        wait "$pid" 2>/dev/null || true
+        failures=0
+        continue
+      fi
+      wait "$pid" 2>/dev/null || true
+      failures=$((failures + 1))
+      # Copy the daemon's log into the container log, where every run can read it.
+      echo "docker-in-docker: rootless dockerd exited" >&2
+      cat /tmp/dockerd.log >&2 || true
+      sleep 2
+    else
+      # Wait for new settings before trying again.
+      while [ "$(config_stamp)" = "$stamp" ]; do sleep 2; done
+      failures=0
+    fi
+  done
 }
 
 # Supervise the daemon in the background, so the container command starts right away.
 {
   # Trust any mounted CA, so the daemon reaches registries behind a TLS proxy.
   update-ca-certificates >/dev/null 2>&1 || true
-
-  if ! start_dockerd; then
-    echo "docker-in-docker: rootless dockerd exited, retrying once" >&2
-    # Copy the daemon's log into the container log, where every run can read it.
-    cat /tmp/dockerd.log >&2 || true
-    sleep 2
-    if ! start_dockerd; then
-      echo "docker-in-docker: rootless dockerd failed to start" >&2
-      cat /tmp/dockerd.log >&2 || true
-    fi
-  fi
+  supervise
 } &
 
 # Hand off to the container command.

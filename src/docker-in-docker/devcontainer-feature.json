@@ -24,11 +24,6 @@
       "type": "string",
       "default": "latest",
       "description": "Compose plugin channel (latest) or a version (major, major.minor or major.minor.patch)."
-    },
-    "daemonJson": {
-      "type": "string",
-      "default": "",
-      "description": "Daemon settings as JSON with backslash-escaped quotes, written to daemon.json."
     }
   },
   "entrypoint": "/usr/local/libexec/docker-in-docker/docker-init.sh",
@@ -49,6 +44,38 @@
     "vscode": {
       "extensions": [
         "ms-azuretools.vscode-containers"
+      ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "*.docker.io",
+          "ports": [
+            443
+          ],
+          "description": "Image registry"
+        },
+        {
+          "name": "production.cloudfront.docker.com",
+          "ports": [
+            443
+          ],
+          "description": "Image layer downloads"
+        },
+        {
+          "name": "docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage.com",
+          "ports": [
+            443
+          ],
+          "description": "Image layer downloads"
+        }
+      ],
+      "files": [
+        {
+          "name": "daemon.json",
+          "target": "${stateDir}/daemon.json",
+          "description": "The daemon's config, applied by restarting it"
+        }
       ]
     }
   }

@@ -14,11 +14,6 @@
       "type": "string",
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
-    },
-    "npmrc": {
-      "type": "string",
-      "default": "",
-      "description": "npm config as INI with backslash-escaped line breaks, written to .npmrc."
     }
   },
   "containerEnv": {
@@ -56,6 +51,13 @@
           "name": "NPM_CONFIG_USERCONFIG",
           "value": "${stateDir}/npmrc",
           "description": "npm's user config in the state dir"
+        }
+      ],
+      "files": [
+        {
+          "name": "npmrc",
+          "target": "${stateDir}/npmrc",
+          "description": "npm's user config"
         }
       ]
     }

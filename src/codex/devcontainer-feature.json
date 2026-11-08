@@ -14,17 +14,45 @@
       "type": "string",
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
-    },
-    "configToml": {
-      "type": "string",
-      "default": "",
-      "description": "Codex config as TOML with backslash-escaped quotes and line breaks, written to config.toml."
     }
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "openai.chatgpt"
+      ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "api.openai.com",
+          "ports": [
+            443
+          ],
+          "secret": "OPENAI_API_KEY",
+          "description": "Model inference with an API key"
+        },
+        {
+          "name": "chatgpt.com",
+          "ports": [
+            443
+          ],
+          "description": "Model inference with a ChatGPT plan"
+        },
+        {
+          "name": "auth.openai.com",
+          "ports": [
+            443
+          ],
+          "description": "Sign-in"
+        }
+      ],
+      "files": [
+        {
+          "name": "config.toml",
+          "target": "${stateDir}/config.toml",
+          "description": "Codex's config"
+        }
       ]
     }
   },
