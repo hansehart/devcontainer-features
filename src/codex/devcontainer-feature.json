@@ -51,7 +51,7 @@
         {
           "name": "config.toml",
           "target": "${stateDir}/config.toml",
-          "description": "Approval policy, MCP, model and sandbox mode"
+          "description": "MCP, model, permissions and sandbox"
         }
       ]
     }
