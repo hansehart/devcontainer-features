@@ -19,11 +19,6 @@
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
     },
-    "disableNonessentialTraffic": {
-      "type": "boolean",
-      "default": true,
-      "description": "Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 to suppress telemetry and other non-essential network calls."
-    },
     "settingsJson": {
       "type": "string",
       "default": "",
@@ -34,6 +29,37 @@
     "vscode": {
       "extensions": [
         "anthropic.claude-code"
+      ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "api.anthropic.com",
+          "ports": [
+            443
+          ],
+          "secret": "ANTHROPIC_API_KEY",
+          "description": "Claude API"
+        },
+        {
+          "name": "platform.claude.com",
+          "ports": [
+            443
+          ],
+          "description": "Sign-in"
+        }
+      ],
+      "env": [
+        {
+          "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+          "value": "1",
+          "description": "Telemetry and other optional traffic stay off"
+        },
+        {
+          "name": "CLAUDE_CONFIG_DIR",
+          "value": "${stateDir}",
+          "description": "Claude's config and sessions in the state dir"
+        }
       ]
     }
   },

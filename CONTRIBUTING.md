@@ -43,13 +43,12 @@ Files go where the Filesystem Hierarchy Standard (FHS) puts them, so every featu
 
 ### Options
 
-Every option belongs to one of these kinds, and every option is tested at least once with a non-default value. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
+Options choose what gets installed and where its data lives, and each tool runs with its own defaults, which the o3s metadata hardens. Every option belongs to one of these kinds, and every option is tested at least once with a non-default value. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
 
-- **Version:** `version` picks the feature's main program, and `<program>Version` a companion program's release. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`. Tested by one `pinned_version` scenario with the newest release.
+- **Version:** `version` picks the feature's main program, and `<program>Version` a companion program's release. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`. Tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
 - **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem. Tested by a `state_dir` scenario that sets it to `/home/ubuntu/<feature-id>`, with `remoteUser: ubuntu`.
 - **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
-- **Hardening:** named after the env var it sets, without the tool's prefix, and either a boolean defaulting to the hardened value or the tool's own values as an enum defaulting to the most secure one. It sets that one documented env var in `/etc/profile.d/<feature>.sh`, and its description starts with `Set <ENV>`. The other values opt out, and the hardening stays independent of user config. Tested by a scenario that sets an opt-out value, named `<option>_<value>`.
-- **User config:** named after the file it writes, and written exactly as given, only when set. Tested with a real hardening setting that differs from the default, checking that it's written and that the tool reads it.
+- **User config:** named after the file it writes, and written exactly as given, only when set. Tested with a real setting that differs from the tool's default, checking that it's written and that the tool reads it.
 
 ### o3s metadata
 

@@ -2,14 +2,12 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, TOOLCHAIN.
+# Options (uppercased by the CLI): VERSION, STATEDIR.
 FEATURE=go
 VERSION="$(option VERSION latest)"
-TOOLCHAIN="$(option TOOLCHAIN local)"
 
 # Accept only options in the feature's format, before anything is installed.
 require_version '^(latest|1\.[0-9]+(\.[0-9]+)?)$'
-require_version '^(local|path|auto)$' "$TOOLCHAIN" toolchain
 
 # Find a release in the index: the newest of a line, or an exact one that exists.
 find_release() {
@@ -45,10 +43,8 @@ install_program() {
   link_bin /opt/go/bin
 }
 
-# Write the login profile: the chosen toolchain setting, and the paths of installed tools and
-# caches, in the state dir when set.
+# Write the login profile: the paths of installed tools and caches, in the state dir when set.
 profile() {
-  echo "export GOTOOLCHAIN=$TOOLCHAIN"
   if [ -n "$STATE_DIR" ]; then
     echo "export GOPATH=\"$STATE_DIR\""
     echo "export GOCACHE=\"$STATE_DIR/cache\""

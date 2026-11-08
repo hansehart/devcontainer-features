@@ -2,10 +2,9 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR, DISABLENONESSENTIALTRAFFIC, SETTINGSJSON.
+# Options (uppercased by the CLI): VERSION, STATEDIR, SETTINGSJSON.
 FEATURE=claude-code
 VERSION="$(option VERSION latest)"
-DISABLE_NONESSENTIAL_TRAFFIC="$(option DISABLENONESSENTIALTRAFFIC true)"
 SETTINGS_JSON="$(option SETTINGSJSON "")"
 
 # Accept only options in the feature's format, before anything is installed.
@@ -22,11 +21,10 @@ install_program() {
   as_user "curl -fsSL https://claude.ai/install.sh | bash -s -- '$VERSION'"
 }
 
-# Write the login profile: the tool's PATH and the chosen settings.
+# Write the login profile: the tool's PATH and the state dir when set.
 profile() {
   echo 'export PATH="$HOME/.local/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then echo "export CLAUDE_CONFIG_DIR=\"$STATE_DIR\""; fi
-  if [ "$DISABLE_NONESSENTIAL_TRAFFIC" = "true" ]; then echo 'export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1'; fi
 }
 
 # Record the requested settings, for the hook to apply at create.
