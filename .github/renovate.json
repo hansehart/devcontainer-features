@@ -12,7 +12,7 @@
   "semanticCommitScope": "deps",
   "pinDigests": true,
   "minimumReleaseAge": "3 days",
-  "ignorePaths": ["test/**/!(scenarios.json|pinned_*.sh)"],
+  "ignorePaths": ["test/**/!(scenarios.json|pinned_version.sh)"],
   "prBodyColumns": ["Package", "Type", "Update", "Change", "Age"],
   "prBodyDefinitions": {
     "Age": "{{#if newVersion}}{{{newVersionAgeInDays}}} days{{/if}}"
@@ -184,8 +184,7 @@
       ],
       "matchStrings": [
         "\"version\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
-        "rustc (?<currentValue>\\d+\\.\\d+\\.\\d+)",
-        "pinned to (?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "RUST=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "rust-lang/rust"
@@ -195,12 +194,11 @@
       "description": "Keep the pinned rustup release in its test on the newest release.",
       "managerFilePatterns": [
         "/^test/rust/scenarios\\.json$/",
-        "/^test/rust/pinned_rustup\\.sh$/"
+        "/^test/rust/pinned_version\\.sh$/"
       ],
       "matchStrings": [
         "\"rustupVersion\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
-        "rustup (?<currentValue>\\d+\\.\\d+\\.\\d+)",
-        "rustup pinned to (?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "RUSTUP=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
       ],
       "datasourceTemplate": "github-tags",
       "depNameTemplate": "rust-lang/rustup"

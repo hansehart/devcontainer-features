@@ -7,19 +7,12 @@
       }
     }
   },
-  "pinned_rustup": {
-    "image": "ubuntu:24.04",
-    "features": {
-      "rust": {
-        "rustupVersion": "1.29.3"
-      }
-    }
-  },
   "pinned_version": {
     "image": "ubuntu:24.04",
     "features": {
       "rust": {
-        "version": "1.99.1"
+        "version": "1.99.1",
+        "rustupVersion": "1.29.3"
       }
     }
   },
