@@ -43,12 +43,12 @@
         {
           "name": "GOTOOLCHAIN",
           "value": "local",
-          "description": "Go runs the installed toolchain, and others on explicit request"
+          "description": "Toolchains a project asks for install on explicit request"
         },
         {
           "name": "GOPATH",
           "value": "${stateDir}",
-          "description": "Modules and installed tools in the state dir"
+          "description": "Go's modules and installed tools in the state dir"
         },
         {
           "name": "GOCACHE",

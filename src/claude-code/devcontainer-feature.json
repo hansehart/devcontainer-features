@@ -39,7 +39,7 @@
             443
           ],
           "secret": "ANTHROPIC_API_KEY",
-          "description": "Claude API"
+          "description": "Model inference"
         },
         {
           "name": "platform.claude.com",
