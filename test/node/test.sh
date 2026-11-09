@@ -11,18 +11,19 @@ check "node version" bash -lc "node --version"
 check "default resolved an LTS line" bash -lc "node --version | grep -qE '^v[0-9]*[02468]\.'"
 check "npm on PATH" bash -lc "command -v npm"
 check "npx on PATH" bash -lc "command -v npx"
-check "global prefix in the dev user's home" bash -lc '[ "$(npm prefix -g)" = "$HOME/.local" ]'
-check "global prefix writable by the dev user" bash -lc 'mkdir -p "$(npm prefix -g)/lib" && touch "$(npm prefix -g)/lib/.probe" && rm "$(npm prefix -g)/lib/.probe"'
+check "nvm in a login shell" bash -lc "nvm --version"
 
-# The runtime lives in its own folder, linked onto the PATH.
+# The runtime lives in nvm's tree, its current version linked onto the PATH.
 for cmd in node npm npx; do
-  check "$cmd links into the node folder" bash -c "readlink -f \"\$(command -v $cmd)\" | grep -q '^/opt/node/'"
+  check "$cmd links into nvm's current version" bash -c "[ \"\$(readlink \"\$(command -v $cmd)\")\" = /opt/nvm/current/bin/$cmd ]"
 done
-check "nothing left in the shared tree" test ! -e /usr/local/lib/node_modules/npm
+check "the container names nvm's home" bash -c '[ "$NVM_DIR" = /opt/nvm ]'
+check "a process without the profile runs node" bash --noprofile --norc -c 'node --version'
+check "the home holds none of Node" bash -c '[ ! -e "$HOME/.nvm" ]'
+# Global packages live with their Node version, so npm runs without a prefix of its own.
+check "npm sets no prefix" bash -lc '[ -z "${NPM_CONFIG_PREFIX:-}" ] && [ "$(npm prefix -g)" = "$(readlink -f /opt/nvm/current)" ]'
 # The tool's config arrives as a file o3s copies in, so the build records none.
 check "no recorded config" test ! -e /usr/local/etc/node/requested-npmrc
-# Drop the profile's prefix, so the global prefix comes from the feature's global config.
-check "global prefix stays on the default PATH" bash -c '[ "$(env -u NPM_CONFIG_PREFIX npm prefix -g)" = /usr/local ]'
 
 # A project whose postinstall leaves a marker shows whether npm runs install scripts.
 project="$(mktemp -d)"
