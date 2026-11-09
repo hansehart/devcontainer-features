@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.0.0](https://github.com/hansehart/devcontainer-features/compare/python-2.1.0...python-3.0.0) (2026-11-09)
+## [3.0.0](https://github.com/hansehart/devcontainer-features/compare/uv-2.1.0...python-3.0.0) (2026-11-09)
 
 
 ### ⚠ BREAKING CHANGES
