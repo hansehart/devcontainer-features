@@ -17,6 +17,7 @@ for path in sorted(root.glob("src/*/devcontainer-feature.json")):
     feature = f"src/{path.parent.name}"
     o3s = json.loads(path.read_text()).get("customizations", {}).get("o3s")
     if o3s is None:
+        problems.append(f"{feature}: needs an o3s section")
         continue
     for kind in o3s:
         if kind not in needs:

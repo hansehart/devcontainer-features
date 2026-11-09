@@ -37,6 +37,34 @@
       "extensions": [
         "james-yu.latex-workshop"
       ]
+    },
+    "o3s": {
+      "hosts": [
+        {
+          "name": "texlive.info",
+          "ports": [
+            443
+          ],
+          "description": "Packages tlmgr installs"
+        }
+      ],
+      "env": [
+        {
+          "name": "TEXMFCONFIG",
+          "value": "${stateDir}/texmf-config",
+          "description": "TeX Live's user config in the state dir"
+        },
+        {
+          "name": "TEXMFHOME",
+          "value": "${stateDir}/texmf",
+          "description": "TeX Live's user packages in the state dir"
+        },
+        {
+          "name": "TEXMFVAR",
+          "value": "${stateDir}/texmf-var",
+          "description": "TeX Live's generated caches in the state dir"
+        }
+      ]
     }
   },
   "postCreateCommand": "/usr/local/libexec/latex/init.sh"
