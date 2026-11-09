@@ -230,12 +230,29 @@
     },
     {
       "customType": "regex",
+      "description": "Keep the pinned Python release in its test on the newest release.",
+      "managerFilePatterns": [
+        "/^test/python/scenarios\\.json$/",
+        "/^test/python/pinned_version\\.sh$/"
+      ],
+      "matchStrings": [
+        "\"version\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "PYTHON=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "datasourceTemplate": "python-version",
+      "depNameTemplate": "python"
+    },
+    {
+      "customType": "regex",
       "description": "Keep the pinned uv release in its test on the newest release.",
       "managerFilePatterns": [
-        "/^test/uv/scenarios\\.json$/",
-        "/^test/uv/pinned_version\\.sh$/"
+        "/^test/python/scenarios\\.json$/",
+        "/^test/python/pinned_version\\.sh$/"
       ],
-      "matchStrings": ["(?:^|[^\\d.])(?<currentValue>\\d+\\.\\d+\\.\\d+)(?:[^\\d.]|$)"],
+      "matchStrings": [
+        "\"uvVersion\": \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "UV=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "astral-sh/uv"
     }

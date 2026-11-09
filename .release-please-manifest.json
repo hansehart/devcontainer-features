@@ -8,7 +8,7 @@
   "src/node": "4.0.0",
   "src/sops": "2.1.0",
   "src/tea": "1.1.0",
-  "src/uv": "2.1.0",
   "src/go": "2.0.0",
-  "src/rust": "2.0.0"
+  "src/rust": "2.0.0",
+  "src/python": "2.1.0"
 }
