@@ -14,12 +14,12 @@
 - **Comments** state a step's intent, in abstract terms, so they stay accurate as the concrete details change. Every branch and loop carries one, on the line above it.
 - **Tests** come first, so a change starts with a test that fails without it, and the implementation then makes it pass.
 
-## Features
-
-### Releases
+## Releases
 
 - **Scopes** of commits name the feature, or `lib`, `deps` or `repo` for changes beyond one feature.
 - **Registry:** a feature reaches the registry when the release bot's pull request merges, and a new feature joins by adding itself to `release-please-config.json` and its name to the commit scopes in `.commitlintrc.json`.
+
+## Features
 
 ### Interface
 
