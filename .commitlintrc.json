@@ -20,11 +20,11 @@
         "latex",
         "lib",
         "node",
+        "python",
         "repo",
         "rust",
         "sops",
-        "tea",
-        "uv"
+        "tea"
       ]
     ],
     "subject-min-length": [2, "always", 10]
