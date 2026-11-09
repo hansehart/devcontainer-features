@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/hansehart/devcontainer-features/compare/uv-2.1.0...python-3.0.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **python:** rename uv to python and install Python through it ([#161](https://github.com/hansehart/devcontainer-features/issues/161))
+
+### Features
+
+* **python:** rename uv to python and install Python through it ([#161](https://github.com/hansehart/devcontainer-features/issues/161)) ([4aa87b3](https://github.com/hansehart/devcontainer-features/commit/4aa87b30661aa39921b309941919218aad5dad8d))
+
 ## [2.1.0](https://github.com/hansehart/devcontainer-features/compare/uv-2.0.8...uv-2.1.0) (2026-11-09)
 
 
