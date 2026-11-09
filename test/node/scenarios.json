@@ -19,7 +19,8 @@
     "image": "ubuntu:24.04",
     "features": {
       "node": {
-        "version": "22.23.4"
+        "version": "22.23.4",
+        "nvmVersion": "0.41.0"
       }
     }
   },

@@ -14,9 +14,8 @@ check "the folders above the state dir belong to the dev user" bash -c '[ "$(sta
 
 check "NPM_CONFIG_CACHE exported" bash -lc '[ "$NPM_CONFIG_CACHE" = /home/ubuntu/.local/state/node/cache ]'
 check "NPM_CONFIG_USERCONFIG exported" bash -lc '[ "$NPM_CONFIG_USERCONFIG" = /home/ubuntu/.local/state/node/npmrc ]'
-check "global prefix is the state dir" bash -lc '[ "$(npm prefix -g)" = /home/ubuntu/.local/state/node ]'
-# A package installed globally puts its commands in the state dir's bin, which is on the PATH.
-check "global commands on the PATH" bash -lc 'case ":$PATH:" in *":/home/ubuntu/.local/state/node/bin:"*) ;; *) exit 1;; esac'
+# Global packages live with their Node version, whose commands are on the PATH.
+check "global commands on the PATH" bash -lc 'case ":$PATH:" in *":/opt/nvm/current/bin:"*) ;; *) exit 1;; esac'
 
 # The hook keeps its output private to the dev user.
 check "hook output private to the dev user" \

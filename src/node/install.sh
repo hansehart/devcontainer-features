@@ -2,59 +2,58 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# Options (uppercased by the CLI): VERSION, STATEDIR.
+# Options (uppercased by the CLI): VERSION, STATEDIR, NVMVERSION.
 FEATURE=node
 VERSION="$(option VERSION lts)"
+NVM_VERSION="$(option NVMVERSION latest)"
 
 # Accept only options in the feature's format, before anything is installed.
 require_version '^(latest|lts|v?[0-9]+(\.[0-9]+){0,2})$'
+require_version '^(latest|v?[0-9]+\.[0-9]+\.[0-9]+)$' "$NVM_VERSION" nvmVersion
+
+# Run the Node builds, which link against this shared library.
 PACKAGES+=(libatomic1)
 
-# Resolve the channel or release line to a release and its checksum list.
+# Resolve nvm's release, and the Node request nvm resolves and verifies itself.
 resolve_version() {
-  local base="https://nodejs.org/dist" index
+  nvm_tag="$(release_tag github nvm-sh/nvm "$NVM_VERSION")"
+  [[ "$nvm_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "could not resolve nvmVersion '$NVM_VERSION'"
+  log "with nvm $nvm_tag ($NVM_VERSION)"
   case "$VERSION" in
-    v[0-9]*.[0-9]*.[0-9]*) tag="$VERSION" ;;
-    [0-9]*.[0-9]*.[0-9]*)  tag="v$VERSION" ;;
-    # Follow the release pointer, which moves on releases alone.
-    latest) tag="$(curl -fsSL "$base/latest/SHASUMS256.txt" | grep -m1 -oP 'node-\Kv[0-9]+\.[0-9]+\.[0-9]+(?=-)' || true)" ;;
-    *)
-      # Put one release per line, so the searches hold for any index layout.
-      index="$(curl -fsSL "$base/index.json" | tr '}' '\n')"
-      # Search a here-string, so stopping at the first match ends the search cleanly.
-      if [ "$VERSION" = lts ]; then
-        tag="$(grep -m1 '"lts":"' <<< "$index" | grep -oP '"version":"\Kv[^"]+' || true)"
-      else
-        tag="$(grep -m1 -F "\"version\":\"v${VERSION#v}." <<< "$index" | grep -oP '"version":"\Kv[^"]+' || true)"
-      fi ;;
+    lts) tag='lts/*' ;;
+    latest) tag=node ;;
+    *) tag="$VERSION" ;;
   esac
-  [ -n "$tag" ] || die "could not resolve version '$VERSION'"
-  url="$base/$tag/node-$tag-linux-$(arch_name x86_64=x64 aarch64=arm64).tar.gz"
-  checksums="$base/$tag/SHASUMS256.txt"
+  delegated="nvm checks each Node download against its release's SHASUMS256"
 }
 
-# Place the runtime in its own tree, with its commands on the PATH.
+# Install nvm and the chosen Node into their own tree, owned by the dev user so they can add and
+# switch versions, with the current version's commands linked onto the PATH for every process.
 install_program() {
-  unpack /opt/node --exclude=CHANGELOG.md --exclude=LICENSE --exclude=README.md
-  link_bin /opt/node/bin
+  local file
+  install -d -o "$_REMOTE_USER" -g "$(id -gn "$_REMOTE_USER")" "$FEATURE_ROOT/opt/nvm"
+  # Fetch nvm's release by its tag, the way its own installer does, since it publishes no checksums.
+  for file in nvm.sh nvm-exec bash_completion; do
+    curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$nvm_tag/$file" -o "$FEATURE_ROOT/opt/nvm/$file"
+  done
+  chmod 0755 "$FEATURE_ROOT/opt/nvm/nvm-exec"
+  chown "$_REMOTE_USER:" "$FEATURE_ROOT"/opt/nvm/*
+  as_user "export NVM_DIR=/opt/nvm NVM_SYMLINK_CURRENT=true; . /opt/nvm/nvm.sh --no-use \\
+    && nvm install -b '$tag' && nvm alias default '$tag' && nvm use default"
+  link_bin /opt/nvm/current/bin node npm npx
 }
 
-# Write the login profile with a global prefix the dev user owns, in the state dir when set.
+# Write the login profile: nvm for shells that start from a fresh environment, the commands of
+# global packages, and npm's cache and user config in the state dir when set.
 profile() {
-  echo 'export PATH="$HOME/.local/bin:$PATH"'
+  echo 'export NVM_DIR=/opt/nvm'
+  echo 'export NVM_SYMLINK_CURRENT=true'
+  echo '. "$NVM_DIR/nvm.sh" --no-use'
+  echo 'export PATH="$NVM_DIR/current/bin:$PATH"'
   if [ -n "$STATE_DIR" ]; then
     echo "export NPM_CONFIG_CACHE=\"$STATE_DIR/cache\""
-    echo "export NPM_CONFIG_PREFIX=\"$STATE_DIR\""
     echo "export NPM_CONFIG_USERCONFIG=\"$STATE_DIR/npmrc\""
-    echo "export PATH=\"$STATE_DIR/bin:\$PATH\""
-  else
-    echo 'export NPM_CONFIG_PREFIX="$HOME/.local"'
   fi
-}
-
-# Give every process a global prefix on the default PATH.
-settings() {
-  write_file /etc/opt/node/npmrc $'prefix=/usr/local\n'
 }
 
 # Confirm the runtime and its package tools run from the PATH.

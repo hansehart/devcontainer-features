@@ -2,7 +2,7 @@
   "id": "node",
   "version": "4.0.0",
   "name": "Node.js",
-  "description": "Installs the Node.js runtime with npm and npx on a selectable channel or release line.",
+  "description": "Installs the Node.js runtime through nvm, with node, npm and npx, on a selectable channel or release line.",
   "documentationURL": "https://github.com/hansehart/devcontainer-features/tree/main/src/node",
   "options": {
     "version": {
@@ -14,15 +14,28 @@
       "type": "string",
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
+    },
+    "nvmVersion": {
+      "type": "string",
+      "default": "latest",
+      "description": "nvm channel (latest) or an exact version (major.minor.patch)."
     }
   },
   "containerEnv": {
-    "NPM_CONFIG_GLOBALCONFIG": "/etc/opt/node/npmrc"
+    "NVM_DIR": "/opt/nvm",
+    "NVM_SYMLINK_CURRENT": "true"
   },
   "postCreateCommand": "/usr/local/libexec/node/init.sh",
   "customizations": {
     "o3s": {
       "hosts": [
+        {
+          "name": "nodejs.org",
+          "ports": [
+            443
+          ],
+          "description": "Node versions nvm installs"
+        },
         {
           "name": "registry.npmjs.org",
           "ports": [
@@ -41,11 +54,6 @@
           "name": "NPM_CONFIG_CACHE",
           "value": "${stateDir}/cache",
           "description": "npm's cache in the state dir"
-        },
-        {
-          "name": "NPM_CONFIG_PREFIX",
-          "value": "${stateDir}",
-          "description": "npm's global packages in the state dir"
         },
         {
           "name": "NPM_CONFIG_USERCONFIG",
