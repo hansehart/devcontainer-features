@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/hansehart/devcontainer-features/compare/tea-1.0.9...tea-1.1.0) (2026-11-09)
+
+
+### Features
+
+* **repo:** give every feature its o3s metadata ([#156](https://github.com/hansehart/devcontainer-features/issues/156)) ([9bbeb86](https://github.com/hansehart/devcontainer-features/commit/9bbeb86e199232b96ea6002532bb1ff24468dd28))
+
 ## [1.0.9](https://github.com/hansehart/devcontainer-features/compare/tea-1.0.8...tea-1.0.9) (2026-11-07)
 
 

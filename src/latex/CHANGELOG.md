@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/hansehart/devcontainer-features/compare/latex-3.0.5...latex-3.1.0) (2026-11-09)
+
+
+### Features
+
+* **repo:** give every feature its o3s metadata ([#156](https://github.com/hansehart/devcontainer-features/issues/156)) ([9bbeb86](https://github.com/hansehart/devcontainer-features/commit/9bbeb86e199232b96ea6002532bb1ff24468dd28))
+
 ## [3.0.5](https://github.com/hansehart/devcontainer-features/compare/latex-3.0.4...latex-3.0.5) (2026-11-07)
 
 

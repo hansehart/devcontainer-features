@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/hansehart/devcontainer-features/compare/sops-2.0.8...sops-2.1.0) (2026-11-09)
+
+
+### Features
+
+* **repo:** give every feature its o3s metadata ([#156](https://github.com/hansehart/devcontainer-features/issues/156)) ([9bbeb86](https://github.com/hansehart/devcontainer-features/commit/9bbeb86e199232b96ea6002532bb1ff24468dd28))
+
 ## [2.0.8](https://github.com/hansehart/devcontainer-features/compare/sops-2.0.7...sops-2.0.8) (2026-11-07)
 
 
