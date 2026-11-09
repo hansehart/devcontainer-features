@@ -28,11 +28,11 @@
     "src/docker-in-docker": { "component": "docker-in-docker" },
     "src/go": { "component": "go" },
     "src/headless-chrome": { "component": "headless-chrome" },
-    "src/latex": { "component": "latex" },
+    "src/latex": { "component": "latex", "release-as": "3.1.0" },
     "src/node": { "component": "node" },
     "src/rust": { "component": "rust" },
-    "src/sops": { "component": "sops" },
-    "src/tea": { "component": "tea" },
-    "src/uv": { "component": "uv" }
+    "src/sops": { "component": "sops", "release-as": "2.1.0" },
+    "src/tea": { "component": "tea", "release-as": "1.1.0" },
+    "src/uv": { "component": "uv", "release-as": "2.1.0" }
   }
 }
