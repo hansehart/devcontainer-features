@@ -15,7 +15,7 @@ check "nvm in a login shell" bash -lc "nvm --version"
 
 # The runtime lives in nvm's tree, its current version linked onto the PATH.
 for cmd in node npm npx; do
-  check "$cmd links into nvm's current version" bash -c "[ \"\$(readlink \"\$(command -v $cmd)\")\" = /opt/nvm/current/bin/$cmd ]"
+  check "$cmd links into nvm's current version" bash -c "[ \"\$(readlink /usr/local/bin/$cmd)\" = /opt/nvm/current/bin/$cmd ]"
 done
 check "the container names nvm's home" bash -c '[ "$NVM_DIR" = /opt/nvm ]'
 check "a process without the profile runs node" bash --noprofile --norc -c 'node --version'
