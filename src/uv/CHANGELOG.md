@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/hansehart/devcontainer-features/compare/uv-2.0.8...uv-2.1.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153))
+
+### Features
+
+* **repo:** give every feature its o3s metadata ([#156](https://github.com/hansehart/devcontainer-features/issues/156)) ([9bbeb86](https://github.com/hansehart/devcontainer-features/commit/9bbeb86e199232b96ea6002532bb1ff24468dd28))
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153)) ([9c019d9](https://github.com/hansehart/devcontainer-features/commit/9c019d962658c35f0cc30d65d8fdf311ec1c0de3))
+
 ## [2.0.8](https://github.com/hansehart/devcontainer-features/compare/uv-2.0.7...uv-2.0.8) (2026-11-07)
 
 

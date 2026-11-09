@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.0.0](https://github.com/hansehart/devcontainer-features/compare/claude-code-2.1.5...claude-code-3.0.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153))
+* **repo:** move the hardened defaults into the o3s metadata ([#151](https://github.com/hansehart/devcontainer-features/issues/151))
+
+### Features
+
+* **repo:** move the hardened defaults into the o3s metadata ([#151](https://github.com/hansehart/devcontainer-features/issues/151)) ([be747f0](https://github.com/hansehart/devcontainer-features/commit/be747f0d6cd8a72cdd8e28eb8adf6430bd896526))
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153)) ([9c019d9](https://github.com/hansehart/devcontainer-features/commit/9c019d962658c35f0cc30d65d8fdf311ec1c0de3))
+
 ## [2.1.5](https://github.com/hansehart/devcontainer-features/compare/claude-code-2.1.4...claude-code-2.1.5) (2026-11-07)
 
 

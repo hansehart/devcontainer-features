@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/hansehart/devcontainer-features/compare/codex-2.1.3...codex-3.0.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153))
+
+### Features
+
+* **repo:** move the tools' config files into the o3s metadata ([#153](https://github.com/hansehart/devcontainer-features/issues/153)) ([9c019d9](https://github.com/hansehart/devcontainer-features/commit/9c019d962658c35f0cc30d65d8fdf311ec1c0de3))
+
 ## [2.1.3](https://github.com/hansehart/devcontainer-features/compare/codex-2.1.2...codex-2.1.3) (2026-11-07)
 
 
