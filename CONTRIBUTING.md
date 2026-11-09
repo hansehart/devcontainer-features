@@ -16,12 +16,12 @@
 
 ## III. Features
 
-### Releases
+### 1. Releases
 
 - **Scopes** of commits name the feature, or `lib`, `deps` or `repo` for changes beyond one feature.
 - **Registry:** a feature reaches the registry when the release bot's pull request merges, and a new feature joins by adding itself to `release-please-config.json` and its name to the commit scopes in `.commitlintrc.json`.
 
-### Interface
+### 2. Interface
 
 Every feature runs through the shared library in `lib/`, so features install and prepare their state the same way. `lib/sync.sh` copies the library into each feature, since a feature can only ship its own files, and CI checks that the copies match their source.
 
@@ -33,7 +33,7 @@ Every feature runs through the shared library in `lib/`, so features install and
 - **Hook:** `init.sh` sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, and warns when it sits on the container filesystem. `apply_config` writes a recorded user config to where the tool reads it.
 - **Library changes:** reach every feature that carries the changed file, which the release pull request then releases.
 
-### Layout
+### 3. Layout
 
 Files go where the Filesystem Hierarchy Standard (FHS) puts them, so every feature lays out the same way.
 
@@ -47,7 +47,7 @@ Files go where the Filesystem Hierarchy Standard (FHS) puts them, so every featu
 - **User data:** everything that belongs to the remote user stays in their home, including per-user installs in `~/.local/bin` and the feature's state dir, which holds data only.
 - **Volumes:** a volume the feature declares is named after the feature, and holds the runtime state of a program.
 
-### Options
+### 4. Options
 
 Options choose what gets installed and where its data lives. Each tool runs with its own defaults, which the o3s metadata hardens, and reads its config from the files the o3s metadata names. Every option belongs to one of these kinds, and every option is tested at least once with a non-default value. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
 
@@ -55,6 +55,6 @@ Options choose what gets installed and where its data lives. Each tool runs with
 - **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem. Tested by a `state_dir` scenario that sets it to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
 - **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
 
-### o3s metadata
+### 5. o3s metadata
 
 A feature names what o3s sets up for it in `customizations.o3s`, the section o3s reads. It holds three lists, whose entries each carry a `name` and a `description` of what the entry is for. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`ports`, `secret`, `inject`). `env` lists the variables for its hardened defaults and state paths, each with its `value`. `files` lists the config files o3s copies in, each with the `target` it lands at. Values may use `${stateDir}`, which o3s fills in with the state dir it chose. A feature whose tool needs nothing of o3s carries an empty section, which says so.
