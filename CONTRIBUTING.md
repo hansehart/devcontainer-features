@@ -17,7 +17,7 @@
 ## Releases
 
 - **Scopes** of commits name the feature, or `lib`, `deps` or `repo` for changes beyond one feature.
-- **Registry:** a feature reaches the registry when the release bot's pull request merges, and a new feature joins by adding itself to `release-please-config.json` and its name to the commit scopes in `.commitlintrc.json`.
+- **Features** reach the registry when the release bot's pull request merges, and a new feature joins by adding itself to `release-please-config.json` and its name to the commit scopes in `.commitlintrc.json`.
 
 ## Features
 
