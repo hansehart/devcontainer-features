@@ -3,7 +3,7 @@
     "image": "ubuntu:24.04",
     "features": {
       "claude-code": {
-        "version": "2.1.318"
+        "version": "2.1.319"
       }
     }
   },
