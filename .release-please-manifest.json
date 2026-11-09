@@ -5,7 +5,7 @@
   "src/docker-in-docker": "4.0.0",
   "src/headless-chrome": "1.1.0",
   "src/latex": "3.1.0",
-  "src/node": "4.0.0",
+  "src/node": "5.0.0",
   "src/sops": "2.1.0",
   "src/tea": "1.1.0",
   "src/go": "2.0.0",
