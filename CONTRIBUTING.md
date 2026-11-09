@@ -55,6 +55,6 @@ Options choose what gets installed and where its data lives. Each tool runs with
 - **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem. Tested by a `state_dir` scenario that sets it to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
 - **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
 
-### 5. o3s metadata
+### 5. Metadata
 
 A feature names what o3s sets up for it in `customizations.o3s`, the section o3s reads. It holds three lists, whose entries each carry a `name` and a `description` of what the entry is for. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`ports`, `secret`, `inject`). `env` lists the variables for its hardened defaults and state paths, each with its `value`. `files` lists the config files o3s copies in, each with the `target` it lands at. Values may use `${stateDir}`, which o3s fills in with the state dir it chose. A feature whose tool needs nothing of o3s carries an empty section, which says so.
