@@ -1,0 +1,28 @@
+{
+  "minor_line": {
+    "image": "ubuntu:24.04",
+    "features": {
+      "python": {
+        "version": "3.14"
+      }
+    }
+  },
+  "pinned_version": {
+    "image": "ubuntu:24.04",
+    "features": {
+      "python": {
+        "version": "3.15.2",
+        "uvVersion": "0.13.7"
+      }
+    }
+  },
+  "state_dir": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "python": {
+        "stateDir": "/home/ubuntu/.local/state/python"
+      }
+    }
+  }
+}

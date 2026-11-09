@@ -1,28 +1,27 @@
 {
-  "id": "uv",
+  "id": "python",
   "version": "2.1.0",
-  "name": "uv (Python)",
-  "description": "Installs the uv Python package and interpreter manager as a single static binary.",
-  "documentationURL": "https://github.com/hansehart/devcontainer-features/tree/main/src/uv",
+  "name": "Python",
+  "description": "Installs Python through uv, with python, uv and uvx, on a selectable channel or release line.",
+  "documentationURL": "https://github.com/hansehart/devcontainer-features/tree/main/src/python",
+  "legacyIds": [
+    "uv"
+  ],
   "options": {
     "version": {
       "type": "string",
       "default": "latest",
-      "description": "Channel (latest) or an exact version (major.minor.patch)."
+      "description": "Channel (latest), a minor line (major.minor), or an exact version (major.minor.patch)."
     },
     "stateDir": {
       "type": "string",
       "default": "",
       "description": "If set, puts this feature's data at this path, which must be inside the remote user's home. Mount a volume there to persist it across rebuilds."
     },
-    "python": {
+    "uvVersion": {
       "type": "string",
-      "proposals": [
-        "",
-        "latest"
-      ],
-      "default": "",
-      "description": "Installs this CPython at build as the default (adds python/python3 to PATH). Empty installs no interpreter, leaving uv to use an available Python or download one on demand."
+      "default": "latest",
+      "description": "uv channel (latest) or an exact version (major.minor.patch)."
     }
   },
   "customizations": {
@@ -74,11 +73,6 @@
           "description": "With manual, Python versions a project asks for install on explicit request"
         },
         {
-          "name": "UV_PYTHON_INSTALL_DIR",
-          "value": "${stateDir}/python",
-          "description": "uv's Python versions in the state dir"
-        },
-        {
           "name": "UV_TOOL_BIN_DIR",
           "value": "${stateDir}/bin",
           "description": "uv's tool commands in the state dir"
@@ -91,5 +85,9 @@
       ]
     }
   },
-  "postCreateCommand": "/usr/local/libexec/uv/init.sh"
+  "containerEnv": {
+    "UV_PYTHON_BIN_DIR": "/opt/python/bin",
+    "UV_PYTHON_INSTALL_DIR": "/opt/python"
+  },
+  "postCreateCommand": "/usr/local/libexec/python/init.sh"
 }
