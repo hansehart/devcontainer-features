@@ -32,7 +32,7 @@
 - **Installs** run `install.sh`, which names the feature, reads its options with `option`, adds its apt packages to `PACKAGES`, defines its own steps, then calls `feature_main`. The sequence claims the state dir, installs the packages, resolves, downloads and verifies the release, installs the program, writes the profile, the settings and the hooks, and confirms the program runs.
 - **Steps** `resolve_version` and `install_program` are required and set the release and put the program in place. The optional `profile`, `settings`, `post_install` and `confirm` add profile lines, recorded settings, feature-specific work and a custom version check.
 - **Values** reach a command as plain data: every feature declares exactly one of `checksums`, `checksum`, `unverified` or `delegated`, the last two with the reason the build log shows, and `require_version` and the state-dir guard check each option where `install.sh` reads it.
-- **Hooks** start in `init.sh`, which sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, warns when it sits on the container filesystem, and `apply_config` writes a recorded user config to where the tool reads it.
+- **Hooks** start in `init.sh`, which sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, and warns when it sits on the container filesystem.
 
 ## Layout
 
