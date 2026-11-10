@@ -1,8 +1,8 @@
 # Contributing
 
-## Workflow
+## Changes
 
-- **Changes** ideally start as an issue, are made on their own branch, and land on main through a pull request as one squashed commit.
+- **Branches** ideally start from an issue, carry one change each, and land on main through a pull request as one squashed commit.
 - **Commits** start with the kind of change and a scope from `.commitlintrc.json`, followed by a short summary.
 - **Descriptions** of pull requests and issues stay slim and minimal, about 2–3 sentences on average.
 - **Updates** of dependencies arrive from the Renovate bot, one pull request per update.
@@ -11,6 +11,13 @@
 
 - **Comments** state a step's intent, in abstract terms, so they stay accurate as the concrete details change. Every branch and loop carries one, on the line above it.
 - **Tests** come first, so a change starts with a test that fails without it, and the implementation then makes it pass.
+
+## Tests
+
+- **Layout** gives each feature `test/<feature>/`, with `test.sh` for the default install and `scenarios.json` for the rest, each scenario checked by the script of its name.
+- **Options** are each tested at least once with a non-default value.
+- **Versions** are tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
+- **State** is tested by a `state_dir` scenario that sets `stateDir` to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
 
 ## Releases
 
@@ -47,10 +54,10 @@ Files go where the Filesystem Hierarchy Standard (FHS) puts them, so every featu
 
 ### Options
 
-Options choose what gets installed and where its data lives. Each tool runs with its own defaults, which the o3s metadata hardens, and reads its config from the files the o3s metadata names. Every option belongs to one of these kinds, and every option is tested at least once with a non-default value. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
+Options choose what gets installed and where its data lives. Each tool runs with its own defaults, which the o3s metadata hardens, and reads its config from the files the o3s metadata names. Every option belongs to one of these kinds. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
 
-- **Version:** `version` picks the feature's main program, and `<program>Version` a companion program's release. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`. Tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
-- **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem. Tested by a `state_dir` scenario that sets it to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
+- **Version:** `version` picks the feature's main program, and `<program>Version` a companion program's release. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`.
+- **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem.
 - **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
 
 ### Metadata
