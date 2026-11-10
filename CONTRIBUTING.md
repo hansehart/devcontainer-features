@@ -34,37 +34,27 @@
 
 ### Interface
 
-- **Features** all run through the shared library in `lib/`, so they install and prepare their state the same way.
-- **Copies** of the library reach each feature through `lib/sync.sh`, since a feature can only ship its own files, and CI checks that they match their source.
-- **Installs** run `install.sh`, which names the feature, reads its options with `option`, adds its apt packages to `PACKAGES`, defines its own steps, then calls `feature_main`. The sequence claims the state dir, installs the packages, resolves and logs the release, downloads and verifies it, installs the program, then writes the profile, the settings and the hooks, and confirms the program runs.
-- **Required** steps are `resolve_version`, which sets the exact release and how its download is verified, and `install_program`, which puts the program in place.
-- **Optional** steps are `profile`, which prints the profile lines, `settings`, which records what the hooks apply, `post_install`, which covers what is unique to the feature, and `confirm`, which replaces the default version check.
-- **Verification** takes exactly one of `checksums`, `checksum`, `unverified` or `delegated` per feature, the last two with the reason, which the build log shows.
-- **Option** checks run through `require_version`, which matches a version, or any value under its option's name, against the feature's format right where `install.sh` reads it. The state-dir guard accepts plain paths, so every value reaches a command as plain data.
-- **Hooks** start in `init.sh`, which sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, and warns when it sits on the container filesystem. `apply_config` writes a recorded user config to where the tool reads it.
-- **Library** changes reach every feature that carries the changed file, which the release-please bot's pull request then releases.
+- **Features** all run through the shared library in `lib/`, which `lib/sync.sh` copies into each feature, since a feature can only ship its own files. CI checks that the copies match their source, and a library change reaches every feature that carries the changed file.
+- **Installs** run `install.sh`, which names the feature, reads its options with `option`, adds its apt packages to `PACKAGES`, defines its own steps, then calls `feature_main`. The sequence claims the state dir, installs the packages, resolves, downloads and verifies the release, installs the program, writes the profile, the settings and the hooks, and confirms the program runs.
+- **Steps** `resolve_version` and `install_program` are required and set the release and put the program in place. The optional `profile`, `settings`, `post_install` and `confirm` add profile lines, recorded settings, feature-specific work and a custom version check.
+- **Values** reach a command as plain data: every feature declares exactly one of `checksums`, `checksum`, `unverified` or `delegated`, the last two with the reason the build log shows, and `require_version` and the state-dir guard check each option where `install.sh` reads it.
+- **Hooks** start in `init.sh`, which sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, warns when it sits on the container filesystem, and `apply_config` writes a recorded user config to where the tool reads it.
 
 ### Layout
 
 - **Files** go where the Filesystem Hierarchy Standard (FHS) puts them, so every feature lays out the same way.
+- **Programs** made of a single binary go in `/usr/local/bin`, and a program made of many files goes in its own `/opt/<program>` tree, with its commands linked into `/usr/local/bin` and its config in `/etc/opt/<program>`. Apt packages keep the distribution's paths, with their signing keys in `/etc/apt/keyrings`.
+- **Feature** files go in `/usr/local/libexec/<feature>` for the hook scripts and their shared code, `/usr/local/etc/<feature>` for the settings recorded at build time, and `/usr/local/share/<feature>` for the data shipped for others to reference.
 - **Environment** variables with a fixed value go in `containerEnv`, and those whose value depends on an option go in `/etc/profile.d/<feature>.sh`.
-- **Hook** scripts the feature runs at build, create or start, and the code they share, go in `/usr/local/libexec/<feature>`.
-- **Packages** from apt keep the distribution's paths, and their signing keys go in `/etc/apt/keyrings`.
-- **Programs** made of a single binary go in `/usr/local/bin`. A program made of many files goes in its own `/opt/<program>` tree, with its commands linked into `/usr/local/bin` and its own config in `/etc/opt/<program>`.
-- **Runtime** state, the data a program changes while running, goes in `/var/opt/<program>` for a program in `/opt` and in `/var/lib/<program>` for any other program, and files that live only while it runs go in `/run`.
-- **Settings** the feature records at build time for its hooks to apply go in `/usr/local/etc/<feature>`.
-- **Shipped** data, the fixed files the feature ships for others to reference, goes in `/usr/local/share/<feature>`.
-- **User** data stays in the remote user's home, including per-user installs in `~/.local/bin` and the feature's state dir, which holds data only.
-- **Volumes** a feature declares are named after the feature, and hold the runtime state of a program.
+- **State** a program changes while running goes in `/var/opt/<program>` or `/var/lib/<program>`, files that live only while it runs go in `/run`, and a declared volume carries the feature's name. Everything of the remote user stays in their home, including `~/.local/bin` and the feature's state dir.
 
 ### Options
 
-- **Options** choose what gets installed and where its data lives, and each belongs to one of the kinds below.
+- **Options** choose what gets installed and where its data lives, each of one kind below, listed with `version` first, then `stateDir` if the feature has one, then the rest alphabetically.
 - **Defaults** come from each tool itself and the o3s metadata hardens them, and the tool reads its config from the files the o3s metadata names.
-- **Order** lists `version` first, then `stateDir` if the feature has one, then the rest alphabetically.
-- **Version** picks the feature's main program through `version`, and a companion program's release through `<program>Version`. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`.
+- **Version** picks the feature's main program through `version`, and a companion program's release through `<program>Version`. Each takes `latest` or a version, resolved to an exact release before installing and logged, and the description names the forms with placeholders, such as `major.minor.patch`.
 - **State** lives in `stateDir`, which is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem.
-- **Feature-specific** options cover whatever is unique to the tool. A list is a comma-separated string with a plural name.
+- **Feature-specific** options cover whatever is unique to the tool, and a list is a comma-separated string with a plural name.
 
 ### Metadata
 
@@ -72,5 +62,4 @@
 - **Hosts** in `hosts` are the ones the tool reaches at run time, with the fields of the o3s allowlist (`ports`, `secret`, `inject`).
 - **Variables** in `env` set the tool's hardened defaults and state paths, each with its `value`.
 - **Files** in `files` are the config files o3s copies in, each with the `target` it lands at.
-- **Values** may use `${stateDir}`, which o3s fills in with the state dir it chose.
-- **Empty** sections mark a feature whose tool needs nothing of o3s.
+- **Values** may use `${stateDir}`, which o3s fills in with the state dir it chose, and a feature whose tool needs nothing of o3s carries an empty section.
