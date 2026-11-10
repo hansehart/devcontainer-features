@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/hansehart/devcontainer-features/compare/node-4.0.0...node-5.0.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **node:** install Node through nvm ([#163](https://github.com/hansehart/devcontainer-features/issues/163))
+
+### Features
+
+* **node:** install Node through nvm ([#163](https://github.com/hansehart/devcontainer-features/issues/163)) ([ef10e30](https://github.com/hansehart/devcontainer-features/commit/ef10e308ac3791be3e73040088c51bbc23ac6fa3))
+
 ## [4.0.0](https://github.com/hansehart/devcontainer-features/compare/node-3.0.9...node-4.0.0) (2026-11-09)
 
 
