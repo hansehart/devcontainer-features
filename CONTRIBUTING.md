@@ -1,30 +1,36 @@
 # Contributing
 
-## Changes
+## ASE standards
+
+### Changes
 
 - **Branches** ideally start from an issue, carry one change each, and land on main through a pull request as one squashed commit.
 - **Commits** start with the kind of change and a scope from `.commitlintrc.json`, followed by a short summary.
 - **Descriptions** of pull requests and issues stay slim and minimal, about 2–3 sentences on average.
 - **Updates** of dependencies arrive from the Renovate bot, one pull request per update.
 
-## Code
+### Code
 
 - **Comments** state a step's intent, in abstract terms, so they stay accurate as the concrete details change. Every branch and loop carries one, on the line above it.
 - **Tests** come first, so a change starts with a test that fails without it, and the implementation then makes it pass.
 
-## Tests
+### Releases
+
+- **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
+- **Releases** go out when that pull request merges, and publish the artifacts the repository standards name.
+
+## Repository standards
+
+### Tests
 
 - **Layout** gives each feature `test/<feature>/`, with `test.sh` for the default install and `scenarios.json` for the rest, each scenario checked by the script of its name.
 - **Options** are each tested at least once with a non-default value.
 - **Versions** are tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
 - **State** is tested by a `state_dir` scenario that sets `stateDir` to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
 
-## Releases
+### Artifacts
 
-- **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
-- **Releases** go out when that pull request merges, and publish each changed feature to the registry. A new feature joins by adding itself to `release-please-config.json` and its name to the scopes in `.commitlintrc.json`.
-
-## Features
+- **Features** reach the registry with every release, each under its own version. A new feature joins by adding itself to `release-please-config.json` and its name to the scopes in `.commitlintrc.json`.
 
 ### Interface
 
