@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The install sequence every feature shares, copied unchanged into each feature by lib/sync.sh.
+# The install sequence every feature shares, carried unchanged by each feature.
 # A feature names itself, defines how its program is resolved and installed, then runs the sequence.
 
 # Default the dev user the CLI provisions, for features that act as that user.
