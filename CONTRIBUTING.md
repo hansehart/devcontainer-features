@@ -15,7 +15,9 @@
 ## Releases
 
 - **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
-- **Releases** go out when that pull request merges, and publish the artifacts the repository standards name.
+- **Releases** go out when that pull request merges.
+- **Features** reach ghcr.io with every release, each tagged with its own version.
+- **Additions** of a feature enter it in `release-please-config.json` and its name in the scopes of `.commitlintrc.json`.
 
 ## Tests
 
@@ -23,10 +25,6 @@
 - **Options** are each tested at least once with a non-default value.
 - **Versions** are tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
 - **State** is tested by a `state_dir` scenario that sets `stateDir` to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
-
-## Artifacts
-
-- **Features** reach the registry with every release, each under its own version. A new feature joins by adding itself to `release-please-config.json` and its name to the scopes in `.commitlintrc.json`.
 
 ## Interface
 
