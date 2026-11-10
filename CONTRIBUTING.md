@@ -53,7 +53,7 @@
 ## Metadata
 
 - **Metadata** for o3s sits in `customizations.o3s`, the section o3s reads, as three lists whose entries each carry a `name` and a `description` of what the entry is for.
-- **Hosts** in `hosts` are the ones the tool reaches at run time, with the fields of the o3s allowlist (`ports`, `secret`, `inject`).
+- **Hosts** in `hosts` are the ones the tool reaches at run time, with the fields of the o3s allowlist.
 - **Variables** in `env` set the tool's hardened defaults and state paths, each with its `value`.
 - **Files** in `files` are the config files o3s copies in, each with the `target` it lands at.
 - **Values** may use `${stateDir}`, which o3s fills in with the state dir it chose, and a feature whose tool needs nothing of o3s carries an empty section.
