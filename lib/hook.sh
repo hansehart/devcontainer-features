@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# The create-time sequence every feature's hook shares, copied unchanged into each feature by
-# lib/sync.sh. A hook defines what's its own in init_state, then runs init_main.
+# The create-time sequence every feature's hook shares, carried unchanged by each feature. A hook
+# defines what's its own in init_state, then runs init_main.
 
 # Locate the root the system paths hang from, which only the library's tests move.
 FEATURE_ROOT="${_FEATURE_TEST_ROOT:-}"

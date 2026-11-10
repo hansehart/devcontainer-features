@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Tests for lib.sh: each case writes a small feature into a sandbox and runs it the way the
-# CLI runs install.sh, with releases, checksums and the release API served from local files.
+# Tests for the shared install sequence: each case writes a small feature into a sandbox and runs
+# it the way the dev container CLI runs a feature, with releases, checksums and the release API
+# served from local files.
 set -uo pipefail
 
 LIB="$(cd "$(dirname "$0")" && pwd)/lib.sh"
@@ -41,7 +42,7 @@ z.writestr(i, open(sys.argv[2]).read()); z.close()' \
   cp "$LIB" "$SANDBOX/feature/lib.sh"
 }
 
-# Write the feature's install.sh: the library, the standard declarations, then the body.
+# Write the feature's install script: the shared sequence, the standard declarations, then the body.
 feature() {
   {
     echo '#!/usr/bin/env bash'

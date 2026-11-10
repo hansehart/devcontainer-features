@@ -1,54 +1,59 @@
 # Contributing
 
-## Workflow
+## Changes
 
-- **Changes** ideally start as an issue, are made on their own branch, and land on main through a pull request as one squashed commit.
-- **Commits** start with the kind of change and the feature's name, followed by a short summary.
+- **Branches** ideally start from an issue, carry one change each, and land on main through a pull request as one squashed commit.
+- **Commits** start with the kind of change and a scope from `.commitlintrc.json`, followed by a short summary.
 - **Descriptions** of pull requests and issues stay slim and minimal, about 2–3 sentences on average.
-- **Versions** are left to the release pull request, which raises a feature's first number for breaking changes, its second for new features, and its third for fixes.
-- **Releases** reach the registry when the release pull request merges, and a new feature joins them by adding itself to `release-please-config.json` and its name to the commit scopes in `.commitlintrc.json`.
+- **Updates** of dependencies arrive from the Renovate bot, one pull request per update.
 
 ## Code
 
-- **Comments** state a step's intent, in abstract terms, so they stay accurate as the concrete details change.
+- **Comments** state a step's intent, in abstract terms, so they stay accurate as the concrete details change. Every branch and loop carries one, on the line above it.
 - **Tests** come first, so a change starts with a test that fails without it, and the implementation then makes it pass.
 
-## Features
+## Releases
 
-### Interface
+- **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
+- **Releases** go out when that pull request merges.
+- **Features** reach ghcr.io with every release, each tagged with its own version.
+- **New** features register in `release-please-config.json` and add their name to the scopes in `.commitlintrc.json`.
 
-Every feature runs through the shared library in `lib/`, so features install and prepare their state the same way. `lib/sync.sh` copies the library into each feature, since a feature can only ship its own files, and CI checks that the copies match their source.
+## Tests
 
-- **Install:** `install.sh` names the feature, reads its options with `option`, adds its apt packages to `PACKAGES`, defines its own steps, then calls `feature_main`. The sequence claims the state dir, installs the packages, resolves and logs the release, downloads and verifies it, installs the program, then writes the profile, the settings and the hooks, and confirms the program runs.
-- **Required steps:** `resolve_version` sets the exact release and how its download is verified, and `install_program` puts the program in place.
-- **Optional steps:** `profile` prints the profile lines, `settings` records what the hooks and entrypoints read, `post_install` covers what is unique to the feature, and `confirm` replaces the default version check.
-- **Verification:** each feature declares exactly one of `checksums`, `checksum`, `unverified` or `delegated`, the last two with the reason, which the build log shows.
-- **Option checks:** `require_version` matches a version, or any value under its option's name, against the feature's format right where `install.sh` reads it, and the state-dir guard accepts plain paths, so every value reaches a command as plain data.
-- **Hook:** `init.sh` sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, and warns when it sits on the container filesystem.
-- **Library changes:** reach every feature that carries the changed file, which the release pull request then releases.
+- **Layout** gives each feature `test/<feature>/`, with `test.sh` for the default install and `scenarios.json` for the rest, each scenario checked by the script of its name.
+- **Options** are each tested at least once with a non-default value.
+- **Versions** are tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
+- **State** is tested by a `state_dir` scenario that sets `stateDir` to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
 
-### Layout
+## Interface
 
-Files go where the Filesystem Hierarchy Standard (FHS) puts them, so every feature lays out the same way.
+- **Features** all run through the shared library in `lib/`, which `lib/sync.sh` copies into each feature, since a feature can only ship its own files. CI checks that the copies match their source, and a library change reaches every feature that carries the changed file.
+- **Installs** run `install.sh`, which names the feature, reads its options with `option`, adds its apt packages to `PACKAGES`, defines its own steps, then calls `feature_main`. The sequence claims the state dir, installs the packages, resolves, downloads and verifies the release, installs the program, writes the profile, the settings and the hooks, and confirms the program runs.
+- **Steps** `resolve_version` and `install_program` are required and set the release and put the program in place. The optional `profile`, `settings`, `post_install` and `confirm` add profile lines, recorded settings, feature-specific work and a custom version check.
+- **Values** reach a command as plain data: every feature declares exactly one of `checksums`, `checksum`, `unverified` or `delegated`, the last two with the reason the build log shows, and `require_version` and the state-dir guard check each option where `install.sh` reads it.
+- **Hooks** start in `init.sh`, which sources `hook.sh`, defines what it prepares in `init_state`, then calls `init_main <feature>`. The shared part reads the recorded state dir and the profile, creates the state dir, warns when it sits on the container filesystem, and
 
-- **Environment:** env vars with a fixed value go in `containerEnv`, and env vars whose value depends on an option go in `/etc/profile.d/<feature>.sh`.
-- **Hook scripts:** the scripts the feature runs at build, create or start, and the code they share, go in `/usr/local/libexec/<feature>`.
-- **Packages:** apt packages keep the distribution's paths, and their signing keys go in `/etc/apt/keyrings`.
-- **Programs:** a single binary goes in `/usr/local/bin`. A program made of many files goes in its own `/opt/<program>` tree, with its commands linked into `/usr/local/bin` and its own config in `/etc/opt/<program>`.
-- **Runtime state:** data a program changes while running goes in `/var/opt/<program>` for a program in `/opt` and in `/var/lib/<program>` for any other program, and files that live only while it runs go in `/run`.
-- **Settings:** what the feature records at build time for its hooks to apply goes in `/usr/local/etc/<feature>`.
-- **Shipped data:** fixed files the feature ships for others to reference go in `/usr/local/share/<feature>`.
-- **User data:** everything that belongs to the remote user stays in their home, including per-user installs in `~/.local/bin` and the feature's state dir, which holds data only.
-- **Volumes:** a volume the feature declares is named after the feature, and holds the runtime state of a program.
+## Layout
 
-### Options
+- **Files** go where the Filesystem Hierarchy Standard (FHS) puts them, so every feature lays out the same way.
+- **Programs** made of a single binary go in `/usr/local/bin`, and a program made of many files goes in its own `/opt/<program>` tree, with its commands linked into `/usr/local/bin` and its config in `/etc/opt/<program>`. Apt packages keep the distribution's paths, with their signing keys in `/etc/apt/keyrings`.
+- **Feature** files go in `/usr/local/libexec/<feature>` for the hook scripts and their shared code, `/usr/local/etc/<feature>` for the settings recorded at build time, and `/usr/local/share/<feature>` for the data shipped for others to reference.
+- **Environment** variables with a fixed value go in `containerEnv`, and those whose value depends on an option go in `/etc/profile.d/<feature>.sh`.
+- **State** a program changes while running goes in `/var/opt/<program>` or `/var/lib/<program>`, files that live only while it runs go in `/run`, and a declared volume carries the feature's name. Everything of the remote user stays in their home, including `~/.local/bin` and the feature's state dir.
 
-Options choose what gets installed and where its data lives. Each tool runs with its own defaults, which the o3s metadata hardens, and reads its config from the files the o3s metadata names. Every option belongs to one of these kinds, and every option is tested at least once with a non-default value. Options are listed with `version` first, then `stateDir` if the feature has one, then the rest in alphabetical order.
+## Options
 
-- **Version:** `version` picks the feature's main program, and `<program>Version` a companion program's release. Each takes `latest` or a version, resolved to an exact release before installing, and that release is logged. The description names the forms with placeholders, such as `major.minor.patch`. Tested by one `pinned_version` scenario with the newest releases, the companion programs pinned beside the main one.
-- **State:** `stateDir` is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem. Tested by a `state_dir` scenario that sets it to `/home/ubuntu/.local/state/<feature-id>`, a nested path whose missing folders the guard creates for the dev user, with `remoteUser: ubuntu`.
-- **Feature-specific:** whatever is unique to the tool. A list is a comma-separated string with a plural name.
+- **Options** choose what gets installed and where its data lives, each of one kind below, listed with `version` first, then `stateDir` if the feature has one, then the rest alphabetically.
+- **Defaults** come from each tool itself and the o3s metadata hardens them, and the tool reads its config from the files the o3s metadata names.
+- **Version** picks the feature's main program through `version`, and a companion program's release through `<program>Version`. Each takes `latest` or a version, resolved to an exact release before installing and logged, and the description names the forms with placeholders, such as `major.minor.patch`.
+- **State** lives in `stateDir`, which is opt-in, must be inside the remote user's home, and is meant to sit on a volume. The feature checks the path at build time, and its create hook creates the dir and warns when it sits on the container filesystem.
+- **Feature-specific** options cover whatever is unique to the tool, and a list is a comma-separated string with a plural name.
 
-### o3s metadata
+## Metadata
 
-A feature names what o3s sets up for it in `customizations.o3s`, the section o3s reads. It holds three lists, whose entries each carry a `name` and a `description` of what the entry is for. `hosts` lists the hosts the tool reaches at run time, with the fields of the o3s allowlist (`ports`, `secret`, `inject`). `env` lists the variables for its hardened defaults and state paths, each with its `value`. `files` lists the config files o3s copies in, each with the `target` it lands at. Values may use `${stateDir}`, which o3s fills in with the state dir it chose. A feature whose tool needs nothing of o3s carries an empty section, which says so.
+- **Metadata** for o3s sits in `customizations.o3s`, the section o3s reads, as three lists whose entries each carry a `name` and a `description` of what the entry is for.
+- **Hosts** in `hosts` are the ones the tool reaches at run time, with the fields of the o3s allowlist.
+- **Variables** in `env` set the tool's hardened defaults and state paths, each with its `value`.
+- **Files** in `files` are the config files o3s copies in, each with the `target` it lands at.
+- **Values** may use `${stateDir}`, which o3s fills in with the state dir it chose, and a feature whose tool needs nothing of o3s carries an empty section.
