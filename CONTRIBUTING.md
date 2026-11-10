@@ -17,7 +17,7 @@
 - **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
 - **Releases** go out when that pull request merges.
 - **Features** reach ghcr.io with every release, each tagged with its own version.
-- **Additions** of a feature enter it in `release-please-config.json` and its name in the scopes of `.commitlintrc.json`.
+- **New** features register in `release-please-config.json` and add their name to the scopes in `.commitlintrc.json`.
 
 ## Tests
 
