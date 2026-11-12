@@ -3,7 +3,7 @@
 ## Changes
 
 - **Branches** ideally start from an issue, carry one change each, and land on main through a pull request as one squashed commit.
-- **Commits** start with the kind of change and a scope from `.commitlintrc.json`, followed by a short summary.
+- **Commits** start with the kind of change and a scope from `.github/tools/commitlint.json`, followed by a short summary.
 - **Descriptions** of pull requests and issues stay slim and minimal, about 2–3 sentences on average.
 - **Updates** of dependencies arrive from the Renovate bot, one pull request per update.
 
@@ -17,7 +17,7 @@
 - **Versions** are left to the release-please bot, whose pull request raises the first number for breaking changes, the second for new features, and the third for fixes.
 - **Releases** go out when that pull request merges.
 - **Features** reach ghcr.io with every release, each tagged with its own version.
-- **New** features register in `release-please-config.json` and add their name to the scopes in `.commitlintrc.json`.
+- **New** features register in `release-please-config.json` and add their name to the scopes in `.github/tools/commitlint.json`.
 
 ## Tests
 
